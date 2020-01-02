@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    ABCDEFG
     <router-view></router-view>
   </div>
 </template>
