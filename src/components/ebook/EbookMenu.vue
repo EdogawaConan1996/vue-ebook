@@ -4,39 +4,36 @@
       <div class="menu-wrapper" :class="{'hide-box-shadow': settingVisible >= 0 || !menuVisible}"
            v-show="menuVisible">
         <div class="icon-wrapper" :class="{'selected': settingVisible === 3}">
-          <span class="icon-menu" @click="showSetting(3)"></span>
+          <span class="icon-menu" @click="showSetting(3)"/>
         </div>
         <div class="icon-wrapper" :class="{'selected': settingVisible === 2}">
-          <span class="icon-progress" @click="showSetting(2)"></span>
+          <span class="icon-progress" @click="showSetting(2)"/>
         </div>
         <div class="icon-wrapper" :class="{'selected': settingVisible === 1}">
-          <span class="icon-bright" @click="showSetting(1)"></span>
+          <span class="icon-bright" @click="showSetting(1)" />
         </div>
         <div class="icon-wrapper" :class="{'selected': settingVisible === 0}">
-          <span class="icon-A" @click="showSetting(0)"></span>
+          <span class="icon-A" @click="showSetting(0)" />
         </div>
       </div>
     </transition>
+    <ebook-setting-font />
+    <ebook-setting-font-popup />
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import ebookMixin from "../../mixins/ebookMixin";
+import EbookSettingFont from "./EbookSettingFont";
+import EbookSettingFontPopup from "./EbookSettingFontPopup";
+
 export default {
   name: 'ebook-menu',
-  data() {
-    return {
-      settingVisible: -1
-    }
-  },
-  computed: {
-    ...mapGetters({
-      'menuVisible': 'Book/getMenuVisible'
-    })
-  },
+  components: {EbookSettingFontPopup, EbookSettingFont},
+  mixins: [ebookMixin],
   methods: {
     showSetting(index) {
-      this.settingVisible = index
+      this.setSettingVisible(index)
     }
   }
 }

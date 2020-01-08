@@ -2,17 +2,17 @@
   <transition name="slide-down">
     <div class="ebook-title" v-show="menuVisible">
       <div class="left">
-        <span class="icon-back" @click="back"></span>
+        <span class="icon-back" @click="back"/>
       </div>
       <div class="right">
         <div class="icon-wrapper">
-          <span class="icon-cart"></span>
+          <span class="icon-cart"/>
         </div>
         <div class="icon-wrapper">
-          <span class="icon-person"></span>
+          <span class="icon-person"/>
         </div>
         <div class="icon-wrapper">
-          <span class="icon-more"></span>
+          <span class="icon-more"/>
         </div>
       </div>
     </div>
@@ -20,17 +20,13 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import ebookMixin from "../../mixins/ebookMixin";
 export default {
   name: 'ebook-title',
-  computed: {
-    ...mapGetters({
-      'menuVisible': 'Book/getMenuVisible'
-    })
-  },
+  mixins: [ebookMixin],
   methods: {
     back() {
-      
+
     }
   }
 }
@@ -52,11 +48,13 @@ export default {
     .left {
       flex: 0 0 px2rem(37);
       @include left;
+      margin-left: px2rem(15);
     }
     .right {
       flex: 1;
       display: flex;
       justify-content: flex-end;
+      margin-right: px2rem(15);
       .icon-wrapper {
         flex: 0 0 px2rem(37);
         @include right;

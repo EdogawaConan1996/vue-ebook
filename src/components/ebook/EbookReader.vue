@@ -5,10 +5,11 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
 import Epub from 'epubjs'
+import ebookMixin from "../../mixins/ebookMixin";
 export default {
   name: 'EbookReader',
+  mixins: [ebookMixin],
   data() {
     return {
       book: null,
@@ -18,65 +19,79 @@ export default {
       touchStartTime: 0
     }
   },
-  computed: {
-    ...mapGetters({
-      'fileName': 'Book/getFileName'
-    })
-  },
   methods: {
-    ...mapActions({
-      'setFileName': 'Book/setFileNameAction',
-      'setMenuVisible': 'Book/setMenuVisibleAction'
-    }),
     initEpub() {
-      const baseUrl = 'http://39.97.112.165:8000/epubs/'
-      const url = `${baseUrl}${this.fileName}.epub`
-      this.book = new Epub(url)
+      const baseUrl = 'http://39.97.112.165:8000/epubs/';
+      const url = `${baseUrl}${this.fileName}.epub`;
+      this.book = new Epub(url);
+      this.setCurrentBook(this.book);
       this.rendition = this.book.renderTo('book-wrapper', {
         width: window.innerWidth,
         height: window.innerHeight,
         method: 'default'
-      })
+      });
       this.rendition.on('touchstart', (event) => {
-        this.touchStartX = event.changedTouches[0].clientX
+        this.touchStartX = event.changedTouches[0].clientX;
         // this.touchStratY = event.touches[0].clientY
-        this.touchStartTime = event.timeStamp
-      })
+        this.touchStartTime = event.timeStamp;
+      });
       this.rendition.on('touchend', (event) => {
-        const touchEndX = event.changedTouches[0].clientX
+        const touchEndX = event.changedTouches[0].clientX;
         // const touchEndY = event.touches[0].clientY
-        const touchEndTime = event.timeStamp
-        const touchTime = touchEndTime - this.touchStartTime
-        const touchDistanceX = touchEndX - this.touchStartX
+        const touchEndTime = event.timeStamp;
+        const touchTime = touchEndTime - this.touchStartTime;
+        const touchDistanceX = touchEndX - this.touchStartX;
         if (Math.abs(touchDistanceX) < 40 || touchTime > 500) {
-          this.showTitleAndMenu()
+          if (this.menuVisible) {
+            this.hideTitleAndMenu()
+          } else {
+            this.toggleTitleAndMenu()
+          }
         }
         if (touchDistanceX < -50) {
           this.nextPage()
         } else if (touchDistanceX > 50) {
           this.prevPage()
         }
-        event.preventDefault()
+        event.preventDefault();
         event.stopPropagation()
-      })
+      });
+      this.rendition.hooks.content.register( async contents => {
+        await contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`);
+        await contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`);
+        await contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`);
+        await contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`);
+        // eslint-disable-next-line no-console
+        console.log('字体全部加载完毕')
+      });
       this.rendition.display()
     },
-    showTitleAndMenu() {
-      this.setMenuVisible()
+    toggleTitleAndMenu() {
+      if (this.menuVisible) {
+        this.setSettingVisible(-1)
+      }
+      this.setMenuVisible(true)
+    },
+    hideTitleAndMenu() {
+      this.setMenuVisible(false);
+      this.setSettingVisible(-1);
+      this.setFontFamilyVisible(false)
     },
     nextPage() {
       if (this.rendition) {
-        this.rendition.next()
+        this.rendition.next();
+        this.hideTitleAndMenu()
       }
     },
     prevPage() {
       if (this.rendition) {
-        this.rendition.prev()
+        this.rendition.prev();
+        this.hideTitleAndMenu()
       }
     }
   },
   mounted() {
-    const fileName = this.$route.params.fileName.split('|')[1]
+    const fileName = this.$route.params.fileName.split('|')[1];
     this.setFileName(fileName).then(() => {
       this.initEpub()
     })
@@ -85,5 +100,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../assets/styles/global.scss" 
+  @import "../../assets/styles/global.scss";
 </style>
