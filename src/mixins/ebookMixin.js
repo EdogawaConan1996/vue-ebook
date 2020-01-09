@@ -1,10 +1,11 @@
 import {mapActions, mapGetters} from 'vuex';
-import {FONT_SIZE_LIST} from "../config/book";
+import {FONT_SIZE_LIST, themeList} from "../config/book";
 
 export default {
   data() {
     return {
-      fontSizeList: FONT_SIZE_LIST
+      fontSizeList: FONT_SIZE_LIST,
+      themeList: themeList(this)
     }
   },
   computed: {

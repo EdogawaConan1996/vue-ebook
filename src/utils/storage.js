@@ -58,4 +58,12 @@ export const saveLocale = (locale) => {
 
 export const getLocale = () => {
   return getLocalStorage('locale')
-}
+};
+
+export const saveTheme = (theme) => {
+  return setLocalStorage('theme', theme)
+};
+
+export const getTheme = () => {
+  return getLocalStorage('theme')
+};
