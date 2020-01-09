@@ -1,6 +1,6 @@
 <template>
   <transition name="slide-down">
-    <div class="ebook-title" v-show="menuVisible">
+    <div class="title-wrapper" v-show="menuVisible">
       <div class="left">
         <span class="icon-back" @click="back"/>
       </div>
@@ -34,8 +34,8 @@ export default {
 
 <style lang="scss" scoped>
   @import "../../assets/styles/global.scss";
-  .ebook-title {
-    position: fixed;
+  .title-wrapper {
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;

@@ -97,8 +97,25 @@ export function themeList(vue) {
 
 export function addCss(href) {
   const link = document.createElement('link')
-  link.setAttribute('ref', 'stylesheet')
+  link.setAttribute('rel', 'stylesheet')
   link.setAttribute('type', 'text/css')
   link.setAttribute('href', href)
   document.getElementsByTagName('head')[0].appendChild(link)
+}
+
+export function removeCss(href) {
+  const links = document.getElementsByTagName('link')
+  for (let i = 0; i < links.length; i++) {
+    const link = links[i]
+    if (link && link.getAttribute('href') && link.getAttribute('href') === href) {
+       link.parentNode.removeChild(link)
+    }
+  }
+}
+
+export function removeAllCss() {
+  removeCss(`${process.env.VUE_APP_RES_URL}/themes/theme_default.css`);
+  removeCss(`${process.env.VUE_APP_RES_URL}/themes/theme_eye.css`);
+  removeCss(`${process.env.VUE_APP_RES_URL}/themes/theme_gold.css`);
+  removeCss(`${process.env.VUE_APP_RES_URL}/themes/theme_night.css`);
 }

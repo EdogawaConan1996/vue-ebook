@@ -1,5 +1,5 @@
 import {mapActions, mapGetters} from 'vuex';
-import {FONT_SIZE_LIST, themeList} from "../config/book";
+import {addCss, FONT_SIZE_LIST, removeAllCss, themeList} from "../config/book";
 
 export default {
   data() {
@@ -50,6 +50,16 @@ export default {
       'setPageList': 'Book/setPageListAction',
       'setOffsetY': 'Book/setOffsetYAction',
       'setIsBookmark': 'Book/setIsBookmarkAction'
-    })
+    }),
+    initGlobalStyle() {
+      removeAllCss()
+      switch (this.defaultTheme) {
+        case 'Default': addCss(`${process.env.VUE_APP_RES_URL}/themes/theme_default.css`); break;
+        case 'Eye': addCss(`${process.env.VUE_APP_RES_URL}/themes/theme_eye.css`); break;
+        case 'Gold': addCss(`${process.env.VUE_APP_RES_URL}/themes/theme_gold.css`); break;
+        case 'Night': addCss(`${process.env.VUE_APP_RES_URL}/themes/theme_night.css`); break;
+        default: addCss(`${process.env.VUE_APP_RES_URL}/themes/theme_default.css`); break;
+      }
+    }
   }
 }

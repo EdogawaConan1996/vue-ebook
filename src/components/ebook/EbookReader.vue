@@ -7,7 +7,7 @@
 <script>
 import Epub from 'epubjs'
 import ebookMixin from "../../mixins/ebookMixin";
-import {getFontFamily, getFontSize, getTheme, saveFontFamily, saveFontSize} from "../../utils/storage";
+import {getFontFamily, getFontSize, getTheme, saveFontFamily, saveFontSize, saveTheme} from "../../utils/storage";
 export default {
   name: 'EbookReader',
   mixins: [ebookMixin],
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     initEpub() {
-      const baseUrl = 'http://39.97.112.165:8000/epubs/';
+      const baseUrl = `${process.env.VUE_APP_RES_URL}/epubs/`;
       const url = `${baseUrl}${this.fileName}.epub`;
       this.book = new Epub(url);
       this.setCurrentBook(this.book);
@@ -69,6 +69,7 @@ export default {
         this.initFontSize()
         this.initFontFamily()
         this.initTheme()
+        this.initGlobalStyle()
       })
     },
     initFontFamily() {
@@ -99,9 +100,9 @@ export default {
         this.rendition.themes.register(theme.name, theme.style)
       })
       // eslint-disable-next-line no-console
-      console.log('主题全部加载完毕')
       let theme = getTheme();
       if (!theme) {
+        saveTheme(this.defaultTheme)
         this.rendition.themes.select(this.defaultTheme)
       } else {
         this.setDefaultTheme(theme)

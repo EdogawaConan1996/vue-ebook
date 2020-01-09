@@ -28,6 +28,7 @@
         this.setDefaultTheme(theme).then(() => {
           saveTheme(theme)
           this.currentBook.rendition.themes.select(theme)
+          this.initGlobalStyle()
         })
       }
     }
