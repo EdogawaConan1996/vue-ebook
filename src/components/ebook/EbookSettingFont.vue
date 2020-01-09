@@ -35,6 +35,7 @@
 
 <script>
   import ebookMixin from "../../mixins/ebookMixin";
+  import {saveFontSize} from "../../utils/storage";
 
   export default {
     name: "ebook-setting-font",
@@ -73,6 +74,7 @@
       },
       setFontSize(fontSize) {
         this.setDefaultFontSize(fontSize);
+        saveFontSize(this.fileName, fontSize);
         this.currentBook.rendition.themes.fontSize(fontSize)
       },
       showFontFamilyPopup() {
@@ -92,6 +94,7 @@
     z-index: 190;
     display: flex;
     flex-direction: column;
+    background: #fff;
     width: 100%;
     height: px2rem(90);
     box-shadow: 0 px2rem(-8) px2rem(8) rgba(0, 0, 0, .15);
