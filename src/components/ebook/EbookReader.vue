@@ -7,7 +7,15 @@
 <script>
 import Epub from 'epubjs'
 import ebookMixin from "../../mixins/ebookMixin";
-import {getFontFamily, getFontSize, getTheme, saveFontFamily, saveFontSize, saveTheme} from "../../utils/storage";
+import {
+  getFontFamily,
+  getFontSize,
+  getLocation,
+  getTheme,
+  saveFontFamily,
+  saveFontSize,
+  saveTheme
+} from "../../utils/storage";
 export default {
   name: 'EbookReader',
   mixins: [ebookMixin],
@@ -16,7 +24,7 @@ export default {
       book: null,
       rendition: null,
       touchStartX: 0,
-      // touchStratY: 0,
+      // touchStartY: 0,
       touchStartTime: 0
     }
   },
@@ -26,14 +34,21 @@ export default {
       const url = `${baseUrl}${this.fileName}.epub`;
       this.book = new Epub(url);
       this.setCurrentBook(this.book);
-      this.rendition = this.book.renderTo('book-wrapper', {
-        width: window.innerWidth,
-        height: window.innerHeight,
-        method: 'default'
-      });
+      this.initRendition();
+      this.initGesture();
+      this.parseBook();
+      this.book.ready.then(() => {
+        // 用于精确分页
+        return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
+      }).then(() => {
+        this.setBookAvailable(true);
+        this.refreshLocation()
+      })
+    },
+    initGesture() {
       this.rendition.on('touchstart', (event) => {
         this.touchStartX = event.changedTouches[0].clientX;
-        // this.touchStratY = event.touches[0].clientY
+        // this.touchStartY = event.touches[0].clientY
         this.touchStartTime = event.timeStamp;
       });
       this.rendition.on('touchend', (event) => {
@@ -57,20 +72,26 @@ export default {
         event.preventDefault();
         event.stopPropagation()
       });
+    },
+    initRendition() {
+      this.rendition = this.book.renderTo('book-wrapper', {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        method: 'default'
+      });
+      const location = getLocation(this.fileName)
+      this.display(location,() => {
+        this.initFontSize();
+        this.initFontFamily();
+        this.initTheme();
+        this.initGlobalStyle();
+      });
       this.rendition.hooks.content.register( async contents => {
         await contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`);
         await contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`);
         await contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`);
         await contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`);
-        // eslint-disable-next-line no-console
-        console.log('字体全部加载完毕')
       });
-      this.rendition.display().then(() => {
-        this.initFontSize()
-        this.initFontFamily()
-        this.initTheme()
-        this.initGlobalStyle()
-      })
     },
     initFontFamily() {
       let font = getFontFamily(this.fileName);
@@ -115,22 +136,31 @@ export default {
       }
       this.setMenuVisible(true)
     },
-    hideTitleAndMenu() {
-      this.setMenuVisible(false);
-      this.setSettingVisible(-1);
-      this.setFontFamilyVisible(false)
-    },
     nextPage() {
       if (this.rendition) {
-        this.rendition.next();
+        this.rendition.next().then(() => {
+          this.refreshLocation()
+        });
         this.hideTitleAndMenu()
       }
     },
     prevPage() {
       if (this.rendition) {
-        this.rendition.prev();
+        this.rendition.prev().then(() => {
+          this.refreshLocation()
+        });
         this.hideTitleAndMenu()
       }
+    },
+    parseBook() {
+      this.book.loaded.cover.then((cover) => {
+        this.book.archive.createUrl(cover).then((url) => {
+          this.setCover(url)
+        })
+      })
+      this.book.loaded.metadata.then((metadata) => {
+        this.setMetaData(metadata)
+      })
     }
   },
   mounted() {

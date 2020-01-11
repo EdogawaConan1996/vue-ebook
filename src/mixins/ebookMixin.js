@@ -1,5 +1,6 @@
 import {mapActions, mapGetters} from 'vuex';
 import {addCss, FONT_SIZE_LIST, removeAllCss, themeList} from "../config/book";
+import {getReadTime, saveLocation} from "../utils/storage";
 
 export default {
   data() {
@@ -19,16 +20,21 @@ export default {
       'defaultTheme': 'Book/getDefaultTheme',
       'progress': 'Book/getProgress',
       'bookAvailable': 'Book/getBookAvailable',
-      'section': 'Book/getProgress',
+      'section': 'Book/getSection',
       'isPaginating': 'Book/getIsPaginating',
       'currentBook': 'Book/getCurrentBook',
       'navigation': 'Book/getNavigation',
       'cover': 'Book/getCover',
       'metadata': 'Book/getMetaData',
       'paginate': 'Book/getPaginate',
-      'offsetY': 'Book/offsetY',
+      'offsetY': 'Book/getOffsetY',
       'isBookmark': 'Book/getIsBookmark',
-    })
+    }),
+    getReadTimeText() {
+      const readTimeMinute = getReadTime(this.fileName) ? Math.ceil(getReadTime(this.fileName) / 60) : 0
+      return this.$t('book.haveRead').replace('$1', readTimeMinute)
+    }
+
   },
   methods: {
     ...mapActions({
@@ -61,6 +67,38 @@ export default {
         case 'Night': addCss(`${process.env.VUE_APP_RES_URL}/themes/theme_night.css`); break;
         default: addCss(`${process.env.VUE_APP_RES_URL}/themes/theme_default.css`); break;
       }
-    }
+    },
+    refreshLocation() {
+      const currentLocation = this.currentBook.rendition.currentLocation();
+      const startCfi = currentLocation.start.cfi
+      const progress = this.currentBook.locations.percentageFromCfi(startCfi);
+      this.setProgress(Math.floor(progress * 100)).then(() => {
+        // this.updateProgressBg()
+        saveLocation(this.fileName,startCfi)
+        this.setSection(currentLocation.start.index)
+      })
+    },
+    display(target, callback) {
+      if (target) {
+        return this.currentBook.rendition.display(target).then(() => {
+          this.refreshLocation()
+          if (callback) {
+            callback()
+          }
+        })
+      } else {
+        return this.currentBook.rendition.display().then(() => {
+          this.refreshLocation()
+          if (callback) {
+            callback()
+          }
+        })
+      }
+    },
+    hideTitleAndMenu() {
+      this.setMenuVisible(false);
+      this.setSettingVisible(-1);
+      this.setFontFamilyVisible(false)
+    },
   }
 }

@@ -3,7 +3,7 @@
     <div class="setting-wrapper" v-show="menuVisible && settingVisible === 2">
       <div class="setting-progress">
         <div class="read-time-wrapper">
-          <span class="read-time-text">{{getReadTime()}}</span>
+          <span class="read-time-text">{{getReadTimeText}}</span>
           <span class="icon-forward"></span>
         </div>
         <div class="progress-wrapper">
@@ -24,7 +24,7 @@
           </div>
         </div>
         <div class="text-wrapper">
-          <span class="progress-section-text">{{section}}</span>
+          <span class="progress-section-text">{{getSectionName}}</span>
           <span class="progress-text">({{bookAvailable ? progress + '%' : $t('book.loading')}})</span>
         </div>
       </div>
@@ -43,26 +43,59 @@
         isProgressLoading: false
       }
     },
+    computed: {
+      getSectionName () {
+        if (this.section) {
+          const sectionInfo = this.currentBook.section(this.section);
+          if (sectionInfo && sectionInfo.href && this.currentBook && this.currentBook.navigation) {
+            return this.currentBook.navigation.get(sectionInfo.href).label
+          } else {
+            return ''
+          }
+        } else {
+          return ''
+        }
+      }
+    },
     methods: {
-      nextSection() {},
-      prevSection() {},
+      nextSection() {
+        if (this.section < this.currentBook.spine.length - 1 && this.bookAvailable) {
+          this.setSection(this.section + 1).then(() => {
+            this.displaySection()
+          })
+        }
+      },
+      prevSection() {
+        if (this.section > 0 && this.bookAvailable) {
+          this.setSection(this.section - 1).then(() => {
+            this.displaySection()
+          })
+        }
+      },
+      displaySection() {
+        const sectionInfo = this.currentBook.section(this.section);
+        if (sectionInfo && sectionInfo.href) {
+          this.display(sectionInfo.href, null)
+        }
+      },
       onProgressInput(progress) {
-        // eslint-disable-next-line no-console
-        console.log(progress);
+        this.setProgress(progress).then(() => {
+          this.updateProgressBg()
+        });
       },
       onProgressChange(progress) {
-        // eslint-disable-next-line no-console
-        console.log(progress);
+        this.setProgress(progress).then(() => {
+          this.displayProgress();
+          this.updateProgressBg();
+        });
       },
       updateProgressBg() {
         this.$refs.progress.style.backgroundSize = `${this.progress}% 100%`
       },
-      getReadTime() {
-        return '已读1分钟'
+      displayProgress() {
+        const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100);
+        this.display(cfi, null)
       }
-    },
-    updated() {
-      this.$refs.progress.style.backgroundSize = `${this.progress}% 100%`
     }
   }
 </script>

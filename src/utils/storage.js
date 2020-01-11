@@ -67,3 +67,19 @@ export const saveTheme = (theme) => {
 export const getTheme = () => {
   return getLocalStorage('theme')
 };
+
+export const saveLocation = (fileName, location) => {
+  return saveBookObject(fileName,'location', location)
+};
+
+export const getLocation = (fileName) => {
+  return getBookObject(fileName, 'location')
+};
+
+export const saveReadTime = (fileName, readTime) => {
+  return saveBookObject(fileName, 'readTime' ,readTime)
+};
+
+export const getReadTime = (fileName) => {
+  return getBookObject(fileName, 'readTime')
+}

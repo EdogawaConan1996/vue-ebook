@@ -8,7 +8,7 @@ export default {
     defaultFontFamily: 'Default',
     fontFamilyVisible: false,
     defaultTheme: 'Default',
-    bookAvailable: true,
+    bookAvailable: false,
     progress: 0,
     section: 0,
     isPaginating: true,
