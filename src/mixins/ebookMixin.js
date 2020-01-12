@@ -70,6 +70,9 @@ export default {
     },
     refreshLocation() {
       const currentLocation = this.currentBook.rendition.currentLocation();
+      if (!currentLocation || !currentLocation.start) {
+        return
+      }
       const startCfi = currentLocation.start.cfi
       const progress = this.currentBook.locations.percentageFromCfi(startCfi);
       this.setProgress(Math.floor(progress * 100)).then(() => {
@@ -81,14 +84,14 @@ export default {
     display(target, callback) {
       if (target) {
         return this.currentBook.rendition.display(target).then(() => {
-          this.refreshLocation()
+          this.refreshLocation();
           if (callback) {
             callback()
           }
         })
       } else {
         return this.currentBook.rendition.display().then(() => {
-          this.refreshLocation()
+          this.refreshLocation();
           if (callback) {
             callback()
           }

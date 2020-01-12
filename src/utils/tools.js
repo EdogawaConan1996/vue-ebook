@@ -7,3 +7,12 @@ export function realPx(px) {
   const maxWidth = window.innerWidth > 500 ? 500 : window.innerWidth
   return px * (maxWidth / 375)
 }
+
+export function flatten(array) {
+  // eslint-disable-next-line no-console
+  return [].concat(...array.map(item => [].concat(item,...flatten(item.subitems))))
+}
+
+export function find(navigation, item, level=0) {
+  return item.parent ? find(navigation,navigation.filter(parentItem => parentItem.id === item.parent)[0], ++level) : level
+}

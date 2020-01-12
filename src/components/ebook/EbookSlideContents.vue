@@ -7,7 +7,7 @@
         </div>
         <input type="text"
                class="slide-contents-search-input"
-               placeholder="$t('book.searchHint')"
+               :placeholder="$t('book.searchHint')"
                @click="showSearchPage"/>
       </div>
       <div class="slide-contents-search-cancel"
@@ -16,7 +16,7 @@
         {{$t('book.cancel')}}
       </div>
     </div>
-    <div class="slide-contents-book-wrapper">
+    <div class="slide-contents-book-wrapper" v-show="!searchVisible">
       <div class="slide-contents-book-img-wrapper">
         <img :src="cover" class="slide-contents-book-img" />
       </div>
@@ -32,14 +32,28 @@
         <div class="slide-contents-book-time">{{getReadTimeText}}</div>
       </div>
     </div>
+    <Scroll class="slide-contents-list"
+            :top="156"
+            :bottom="48"
+            v-show="!searchVisible"
+            ref="scroll">
+      <div class="slide-contents-item" v-for="(item,index) in navigation" :key="index" @click="displayByNavigation(item)">
+        <span class="slide-contents-item-label" :class="{'selected': section === index}" :style="contentItemStyle(item)">{{item.label}}</span>
+        <span class="slide-contents-item-page"></span>
+      </div>
+    </Scroll>
+    <Scroll class="slide-search-list" :top="66" :bottom="48"></Scroll>
   </div>
 </template>
 
 <script type="text/javascript">
 import ebookMixin from "../../mixins/ebookMixin";
+import Scroll from "../common/Scroll";
+import {px2rem} from "../../utils/tools";
 
 export default {
   name: "EbookSlideContents",
+  components: {Scroll},
   mixins: [ebookMixin],
   data() {
     return {
@@ -52,7 +66,31 @@ export default {
     },
     showSearchPage() {
       this.searchVisible = true
+    },
+    contentItemStyle(item) {
+      return {
+        marginLeft: `${px2rem(item.level * 15)}rem`
+      }
+    },
+    displayByNavigation(item) {
+      this.display(item.href, () => {
+        this.hideTitleAndMenu()
+      })
+    },
+    doSearch(q) {
+      return Promise.all(
+        this.currentBook.spine.spineItems.map(item => item.load(this.currentBook.load.bind(this.currentBook))
+          .then(item.find.bind(item, q)).finally(item.unload.bind(item)))
+      ).then(results => Promise.resolve([].concat.apply([], results)));
     }
+  },
+  mounted() {
+   this.currentBook.ready.then(() => {
+     this.doSearch('Small').then(result => {
+       // eslint-disable-next-line no-console
+       console.log(result)
+     })
+   })
   }
 }
 </script>
@@ -140,6 +178,22 @@ export default {
           font-size: px2rem(12);
           margin-top: px2rem(5);
         }
+      }
+    }
+    .slide-contents-list {
+      padding: 0 px2rem(15);
+      box-sizing: border-box;
+      .slide-contents-item {
+        padding: px2rem(20) 0;
+        box-sizing: border-box;
+        display: flex;
+        .slide-contents-item-label {
+          flex: 1;
+          font-size: px2rem(14);
+          line-height: px2rem(16);
+          @include ellipsis();
+        }
+        .slide-contents-item-page {}
       }
     }
   }

@@ -16,6 +16,7 @@ import {
   saveFontSize,
   saveTheme
 } from "../../utils/storage";
+import {find, flatten} from "../../utils/tools";
 export default {
   name: 'EbookReader',
   mixins: [ebookMixin],
@@ -157,9 +158,16 @@ export default {
         this.book.archive.createUrl(cover).then((url) => {
           this.setCover(url)
         })
-      })
+      });
       this.book.loaded.metadata.then((metadata) => {
         this.setMetaData(metadata)
+      });
+      this.book.loaded.navigation.then((nav) => {
+        const navigation = flatten(nav.toc);
+        navigation.forEach(item => {
+          item.level = find(navigation, item)
+        });
+        this.setNavigation(navigation)
       })
     }
   },

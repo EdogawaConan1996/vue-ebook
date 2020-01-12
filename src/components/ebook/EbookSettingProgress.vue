@@ -45,16 +45,7 @@
     },
     computed: {
       getSectionName () {
-        if (this.section) {
-          const sectionInfo = this.currentBook.section(this.section);
-          if (sectionInfo && sectionInfo.href && this.currentBook && this.currentBook.navigation) {
-            return this.currentBook.navigation.get(sectionInfo.href).label
-          } else {
-            return ''
-          }
-        } else {
-          return ''
-        }
+        return this.section ? this.navigation[this.section] : ''
       }
     },
     methods: {
