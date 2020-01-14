@@ -1,9 +1,10 @@
 <template>
-  <div class="ebook">
-    <ebook-title></ebook-title>
-    <ebook-reader></ebook-reader>
-    <ebook-menu></ebook-menu>
-		<ebook-slide></ebook-slide>
+  <div class="ebook" ref="ebook">
+    <ebook-bookmark/>
+    <ebook-title/>
+    <ebook-reader/>
+    <ebook-menu/>
+    <ebook-slide/>
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import EbookReader from '../../components/ebook/EbookReader';
 import EbookTitle from '../../components/ebook/EbookTitle';
 import EbookMenu from '../../components/ebook/EbookMenu';
 import EbookSlide from '../../components/ebook/EbookSlide.vue';
+import EbookBookmark from '../../components/ebook/EbookBookmark';
 import {getReadTime, saveReadTime} from "../../utils/storage";
 import ebookMixin from "../../mixins/ebookMixin";
 export default {
@@ -21,7 +23,8 @@ export default {
     EbookReader,
     EbookTitle,
     EbookMenu,
-		EbookSlide
+    EbookSlide,
+    EbookBookmark
   },
   data() {
     return {
@@ -35,11 +38,36 @@ export default {
         readTime = 0;
       }
       this.task = setInterval(() => {
-        readTime++
+        readTime++;
         if (readTime % 30 === 0) {
           saveReadTime(this.fileName,readTime);
         }
       },1000)
+    },
+    move(value) {
+      this.$refs.ebook.style.top = value + 'px';
+      this.$refs.ebook.style.transition = 'all .2s linear';
+      setTimeout(() => {
+        this.$refs.ebook.style.transition = ''
+      }, 200)
+    },
+    restore() {
+      this.$refs.ebook.style.top = '0';
+      this.$refs.ebook.style.transition = 'all .2s linear';
+      setTimeout(() => {
+        this.$refs.ebook.style.transition = ''
+      }, 200)
+    }
+  },
+  watch: {
+    offsetY(value) {
+      if (!this.menuVisible && this.bookAvailable) {
+        if (value > 0) {
+          this.move(value)
+        } else if (value === 0) {
+          this.restore()
+        }
+      }
     }
   },
   mounted() {
@@ -55,4 +83,11 @@ export default {
 
 <style lang="scss" scoped>
   @import "../../assets/styles/global.scss";
+  .ebook {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 </style>

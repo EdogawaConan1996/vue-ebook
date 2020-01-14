@@ -45,7 +45,7 @@
     },
     computed: {
       getSectionName () {
-        return this.section ? this.navigation[this.section] : ''
+        return this.section ? this.navigation[this.section].label : ''
       }
     },
     methods: {

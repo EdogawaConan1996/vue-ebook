@@ -25,7 +25,7 @@
 <script type="text/javascript">
 	import ebookMixin from '../../mixins/ebookMixin.js';
 	import EbookSlideContents from "./EbookSlideContents";
-	import EbookSlideBookmark from "./EbookSlideBookmark";
+	import EbookBookmark from "./EbookBookmark";
 	import EbookLoading from "./EbookLoading";
 	export default {
 		name: "EbookSlide",
@@ -35,7 +35,7 @@
 			return {
 				currentTab: 1,
 				contents: EbookSlideContents,
-				bookmark: EbookSlideBookmark
+				bookmark: EbookBookmark
 			}
 		},
 		methods: {

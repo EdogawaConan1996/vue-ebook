@@ -1,6 +1,7 @@
 <template>
   <div class="ebook-reader">
     <div id="book-wrapper"></div>
+    <div class="ebook-reader-mask" @click="onMaskClick" @touchmove="move" @touchend="moveEnd"></div>
   </div>
 </template>
 
@@ -26,10 +27,44 @@ export default {
       rendition: null,
       touchStartX: 0,
       // touchStartY: 0,
-      touchStartTime: 0
+      touchStartTime: 0,
+      firstOffsetY: 0
     }
   },
   methods: {
+    onMaskClick(event) {
+      const offsetX = event.offsetX
+      const width = window.innerWidth
+      if (offsetX > 0 && offsetX < width * 0.3) {
+        this.prevPage()
+      } else if (offsetX > 0 && offsetX > width * 0.7) {
+        this.nextPage()
+      } else {
+        if (this.menuVisible) {
+          this.hideTitleAndMenu()
+        } else {
+          this.toggleTitleAndMenu()
+        }
+      }
+    },
+    move(event) {
+      let offsetY = 0;
+      if (this.firstOffsetY) {
+        offsetY = event.changedTouches[0].clientY - this.firstOffsetY;
+        if (offsetY > 63) {
+          return
+        }
+        this.setOffsetY(offsetY)
+      } else {
+        this.firstOffsetY = event.changedTouches[0].clientY
+      }
+      event.preventDefault();
+      event.stopPropagation()
+    },
+    moveEnd() {
+      this.firstOffsetY = 0;
+      this.setOffsetY(0);
+    },
     initEpub() {
       const baseUrl = `${process.env.VUE_APP_RES_URL}/epubs/`;
       const url = `${baseUrl}${this.fileName}.epub`;
@@ -119,8 +154,10 @@ export default {
     },
     initTheme() {
       this.themeList.forEach(theme => {
+        // eslint-disable-next-line no-console
+        console.log(theme.name,theme.style);
         this.rendition.themes.register(theme.name, theme.style)
-      })
+      });
       // eslint-disable-next-line no-console
       let theme = getTheme();
       if (!theme) {
@@ -182,4 +219,17 @@ export default {
 
 <style lang="scss" scoped>
   @import "../../assets/styles/global.scss";
+  .ebook-reader {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    .ebook-reader-mask {
+      position: absolute;
+      z-index: 150;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
 </style>
