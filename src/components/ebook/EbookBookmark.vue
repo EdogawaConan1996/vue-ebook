@@ -16,6 +16,7 @@
 import Bookmark from "../common/Bookmark";
 import {realPx} from "../../utils/tools";
 import ebookMixin from "../../mixins/ebookMixin";
+import {getBookmark} from "../../utils/storage";
 const BLUE = '#346cbc';
 const BLACK = '#000000';
 export default {
@@ -93,13 +94,29 @@ export default {
         this.$refs.bookmark.style.top = `${-this.height}px`;
         this.$refs.iconDown.style.transform = 'rotate(0deg)'
         if (this.isFixed) {
-          this.setIsBookmark(true)
-          // this.addBookmark()
+          this.setIsBookmark(true);
+          this.addBookmark()
         } else {
           this.setIsBookmark(false)
           // this.removeBookmark()
         }
       }, 200)
+    },
+    addBookmark() {
+      this.bookmark = getBookmark(this.fileName)
+      const currentLocation = this.currentBook.rendition.currentLocation();
+      const cfiBase = currentLocation.start.cfi.replace(/!.*/,'');
+      // eslint-disable-next-line no-useless-escape
+      const startCfi = currentLocation.start.cfi.replace(/.*!/,'').replace('/\)$/','');
+      // eslint-disable-next-line no-useless-escape
+      const endCfi = currentLocation.end.cfi.replace(/.*!/,'').replace('/\)$/','');
+      const cfiRange = `${cfiBase}!,${startCfi},${endCfi})`;
+      this.currentBook.getRange(cfiRange).then((range) => {
+        // eslint-disable-next-line no-useless-escape
+        const text = range.toString().replace('/\s\s/g', '')
+        // eslint-disable-next-line no-console
+        console.log(text);
+      })
     }
   },
   watch: {
