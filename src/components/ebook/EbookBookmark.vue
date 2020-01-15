@@ -6,7 +6,7 @@
       </div>
       <div class="ebook-bookmark-text">{{text}}</div>
     </div>
-    <div class="ebook-bookmark-icon-wrapper" :style="isFixed ? fixedStyle : {}">
+    <div class="ebook-bookmark-icon-wrapper" :style="isFixed ? fixedStyle : null">
       <Bookmark :width="15" :height="35" :color="color"/>
     </div>
   </div>
@@ -16,7 +16,7 @@
 import Bookmark from "../common/Bookmark";
 import {realPx} from "../../utils/tools";
 import ebookMixin from "../../mixins/ebookMixin";
-import {getBookmark} from "../../utils/storage";
+import {getBookmark, saveBookmark} from "../../utils/storage";
 const BLUE = '#346cbc';
 const BLACK = '#000000';
 export default {
@@ -27,7 +27,8 @@ export default {
     return {
       text: '',
       color: '#000000',
-      isFixed: false
+      isFixed: false,
+      bookmark: null
     }
   },
   computed: {
@@ -97,13 +98,16 @@ export default {
           this.setIsBookmark(true);
           this.addBookmark()
         } else {
-          this.setIsBookmark(false)
-          // this.removeBookmark()
+          this.setIsBookmark(false);
+          this.removeBookmark()
         }
       }, 200)
     },
     addBookmark() {
-      this.bookmark = getBookmark(this.fileName)
+      this.bookmark = getBookmark(this.fileName);
+      if (!this.bookmark || this.bookmark.length === 0) {
+        this.bookmark = [];
+      }
       const currentLocation = this.currentBook.rendition.currentLocation();
       const cfiBase = currentLocation.start.cfi.replace(/!.*/,'');
       // eslint-disable-next-line no-useless-escape
@@ -115,8 +119,22 @@ export default {
         // eslint-disable-next-line no-useless-escape
         const text = range.toString().replace('/\s\s/g', '')
         // eslint-disable-next-line no-console
-        console.log(text);
+        this.bookmark.push({
+          cfi: currentLocation.start.cfi,
+          text: text
+        });
+        this.setIsBookmark(true);
+        saveBookmark(this.fileName, this.bookmark)
       })
+    },
+    removeBookmark() {
+      const currentLocation = this.currentBook.rendition.currentLocation();
+      const cfi = currentLocation.start.cfi;
+      this.bookmark = getBookmark(this.fileName);
+      if (this.bookmark) {
+        saveBookmark(this.fileName, this.bookmark.filter(item => item.cfi !== cfi));
+      }
+      this.setIsBookmark(false);
     }
   },
   watch: {
@@ -132,6 +150,14 @@ export default {
         this.beforeHeight()
       } else if (value === 0) {
         this.restore()
+      }
+    },
+    isBookmark(value) {
+      this.isFixed = value
+      if (value) {
+        this.color = BLUE
+      } else {
+        this.color = BLACK
       }
     }
   }

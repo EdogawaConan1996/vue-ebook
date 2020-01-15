@@ -84,7 +84,7 @@ export const getReadTime = (fileName) => {
   return getBookObject(fileName, 'readTime')
 };
 
-export const saveBookMark = (fileName,bookmark) => {
+export const saveBookmark = (fileName,bookmark) => {
   return saveBookObject(fileName, 'bookmark', bookmark)
 };
 

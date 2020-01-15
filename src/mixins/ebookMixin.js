@@ -1,6 +1,6 @@
 import {mapActions, mapGetters} from 'vuex';
 import {addCss, FONT_SIZE_LIST, removeAllCss, themeList} from "../config/book";
-import {getReadTime, saveLocation} from "../utils/storage";
+import {getBookmark, getReadTime, saveLocation} from "../utils/storage";
 
 export default {
   data() {
@@ -79,7 +79,22 @@ export default {
         // this.updateProgressBg()
         saveLocation(this.fileName,startCfi)
         this.setSection(currentLocation.start.index)
-      })
+      });
+      const bookmark = getBookmark(this.fileName)
+      if (bookmark) {
+        const isContained = bookmark.some(item => {
+          // eslint-disable-next-line no-console
+          console.log(startCfi,item.cfi);
+          return item.cfi === startCfi
+        });
+        if (isContained) {
+          this.setIsBookmark(true)
+        } else {
+          this.setIsBookmark(false)
+        }
+      } else {
+        this.setIsBookmark(false)
+      }
     },
     display(target, callback) {
       if (target) {
