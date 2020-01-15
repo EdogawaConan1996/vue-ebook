@@ -1,7 +1,14 @@
 <template>
   <div class="ebook-reader">
     <div id="book-wrapper"></div>
-    <div class="ebook-reader-mask" @click="onMaskClick" @touchmove="move" @touchend="moveEnd"></div>
+    <div class="ebook-reader-mask" 
+      @click="onMaskClick" 
+      @touchmove="move" 
+      @touchend="moveEnd"
+      @mousedown.left="onMouseEnter"
+      @mousemove="onMouseMove"
+      @mouseup.left="onMouseEnd">
+    </div>
   </div>
 </template>
 
@@ -28,11 +35,48 @@ export default {
       touchStartX: 0,
       // touchStartY: 0,
       touchStartTime: 0,
-      firstOffsetY: 0
+      firstOffsetY: 0,
+      mouseState: null  // 1-鼠标进入 2-鼠标进入之后的移动 3-鼠标从移动状态松手 4-鼠标还原
     }
   },
   methods: {
+    onMouseEnter(event) {
+      this.mouseState = 1;
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    onMouseMove(event) {
+      if (this.mouseState === 1) {
+        this.mouseState = 2
+      } else if (this.mouseState === 2) {
+        let offsetY = 0;
+        if (this.firstOffsetY) {
+          offsetY = event.clientY - this.firstOffsetY;
+          this.setOffsetY(offsetY)
+        } else {
+          this.firstOffsetY = event.clientY
+        }
+      }
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    onMouseEnd(event) {
+      if (this.mouseState === 2) {
+        this.firstOffsetY = 0;
+        this.setOffsetY(0);
+        this.mouseState = 3
+      } else {
+        this.mouseState = 4
+      }
+      // eslint-disable-next-line no-console
+      console.log(this.mouseState)
+      event.preventDefault();
+      event.stopPropagation();
+    },
     onMaskClick(event) {
+      if (this.mouseState && (this.mouseState === 2 || this.mouseState === 3)) {
+        return
+      }
       const offsetX = event.offsetX
       const width = window.innerWidth
       if (offsetX > 0 && offsetX < width * 0.3) {
