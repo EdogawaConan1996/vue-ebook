@@ -33,8 +33,10 @@ export default {
     getReadTimeText() {
       const readTimeMinute = getReadTime(this.fileName) ? Math.ceil(getReadTime(this.fileName) / 60) : 0
       return this.$t('book.haveRead').replace('$1', readTimeMinute)
+    },
+    getSectionName () {
+      return this.section ? this.navigation[this.section].label : ''
     }
-
   },
   methods: {
     ...mapActions({

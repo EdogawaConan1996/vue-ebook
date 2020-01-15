@@ -1,10 +1,12 @@
 <template>
   <div class="ebook" ref="ebook">
     <ebook-bookmark/>
+    <ebook-header />
     <ebook-title/>
     <ebook-reader/>
     <ebook-menu/>
     <ebook-slide/>
+    <ebook-footer />
   </div>
 </template>
 
@@ -14,6 +16,8 @@ import EbookTitle from '../../components/ebook/EbookTitle';
 import EbookMenu from '../../components/ebook/EbookMenu';
 import EbookSlide from '../../components/ebook/EbookSlide.vue';
 import EbookBookmark from '../../components/ebook/EbookBookmark';
+import EbookHeader from '../../components/ebook/EbookHeader.vue';
+import EbookFooter from '../../components/ebook/EbookFooter.vue';
 import {getReadTime, saveReadTime} from "../../utils/storage";
 import ebookMixin from "../../mixins/ebookMixin";
 export default {
@@ -24,7 +28,9 @@ export default {
     EbookTitle,
     EbookMenu,
     EbookSlide,
-    EbookBookmark
+    EbookBookmark,
+    EbookHeader,
+    EbookFooter
   },
   data() {
     return {

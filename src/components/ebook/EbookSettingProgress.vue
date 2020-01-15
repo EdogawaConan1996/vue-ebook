@@ -43,11 +43,6 @@
         isProgressLoading: false
       }
     },
-    computed: {
-      getSectionName () {
-        return this.section ? this.navigation[this.section].label : ''
-      }
-    },
     methods: {
       nextSection() {
         if (this.section < this.currentBook.spine.length - 1 && this.bookAvailable) {
