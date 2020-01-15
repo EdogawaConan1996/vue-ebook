@@ -51,9 +51,6 @@ export default {
       let offsetY = 0;
       if (this.firstOffsetY) {
         offsetY = event.changedTouches[0].clientY - this.firstOffsetY;
-        if (offsetY > 63) {
-          return
-        }
         this.setOffsetY(offsetY)
       } else {
         this.firstOffsetY = event.changedTouches[0].clientY
