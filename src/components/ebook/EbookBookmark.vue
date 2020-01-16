@@ -185,7 +185,7 @@ export default {
       .ebook-bookmark-down-wrapper {
         font-size: px2rem(14);
         color: #000;
-        transition: all 0.2s linear;
+        transition: all $animationTime $animationType;
         @include center();
       }
       .ebook-bookmark-text {

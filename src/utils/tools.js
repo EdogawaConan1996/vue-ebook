@@ -8,6 +8,13 @@ export function realPx(px) {
   return px * (maxWidth / 375)
 }
 
+export function animationConfig() {
+  return {
+    animationTime: '0.2s',
+    animationType: 'linear'
+  }
+}
+
 export function flatten(array) {
   // eslint-disable-next-line no-console
   return [].concat(...array.map(item => [].concat(item,...flatten(item.subitems))))

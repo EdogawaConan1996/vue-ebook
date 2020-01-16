@@ -20,6 +20,7 @@ import EbookHeader from '../../components/ebook/EbookHeader.vue';
 import EbookFooter from '../../components/ebook/EbookFooter.vue';
 import {getReadTime, saveReadTime} from "../../utils/storage";
 import ebookMixin from "../../mixins/ebookMixin";
+import {animationConfig} from "../../utils/tools";
 export default {
   name: 'index',
   mixins: [ebookMixin],
@@ -52,14 +53,14 @@ export default {
     },
     move(value) {
       this.$refs.ebook.style.top = value + 'px';
-      this.$refs.ebook.style.transition = 'all .2s linear';
+      this.$refs.ebook.style.transition = `all ${animationConfig().animationTime} ${animationConfig().animationType}`;
       setTimeout(() => {
         this.$refs.ebook.style.transition = ''
       }, 200)
     },
     restore() {
       this.$refs.ebook.style.top = '0';
-      this.$refs.ebook.style.transition = 'all .2s linear';
+      this.$refs.ebook.style.transition = `all ${animationConfig().animationTime} ${animationConfig().animationType}`;
       setTimeout(() => {
         this.$refs.ebook.style.transition = ''
       }, 200)
