@@ -17,7 +17,7 @@ export default {
     cover: null,
     metadata: null,
     paginate: '',
-    pagelist: null,
+    pageList: null,
     offsetY: 0,
     isBookmark: null
   },
@@ -37,6 +37,7 @@ export default {
     getNavigation: state => state.navigation,
     getCover: state => state.cover,
     getMetaData: state => state.metadata,
+    getPageList: state => state.pageList,
     getPaginate: state => state.paginate,
     getOffsetY: state => state.offsetY,
     getIsBookmark: state => state.isBookmark
@@ -90,8 +91,8 @@ export default {
     setPaginate: (state, paginate) => {
       state.paginate = paginate
     },
-    setPageList: (state, pagelist) => {
-      state.pagelist = pagelist
+    setPageList: (state, pageList) => {
+      state.pageList = pageList
     },
     setOffsetY: (state, offsetY) => {
       state.offsetY = offsetY
@@ -149,8 +150,8 @@ export default {
     setPaginateAction: ({ commit }, paginate) => {
       commit('setPaginate', paginate)
     },
-    setPageListAction: ({ commit }, pagelist) => {
-      commit('setPageList', pagelist)
+    setPageListAction: ({ commit }, pageList) => {
+      commit('setPageList', pageList)
     },
     setOffsetYAction: ({ commit }, offsetY) => {
       commit('setOffsetY', offsetY)

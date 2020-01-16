@@ -26,6 +26,7 @@ export default {
       'navigation': 'Book/getNavigation',
       'cover': 'Book/getCover',
       'metadata': 'Book/getMetaData',
+      'pageList': 'Book/getPageList',
       'paginate': 'Book/getPaginate',
       'offsetY': 'Book/getOffsetY',
       'isBookmark': 'Book/getIsBookmark',
@@ -85,8 +86,6 @@ export default {
       const bookmark = getBookmark(this.fileName)
       if (bookmark) {
         const isContained = bookmark.some(item => {
-          // eslint-disable-next-line no-console
-          console.log(startCfi,item.cfi);
           return item.cfi === startCfi
         });
         if (isContained) {
@@ -96,6 +95,21 @@ export default {
         }
       } else {
         this.setIsBookmark(false)
+      }
+      // eslint-disable-next-line no-console
+      console.log(this.pageList)
+      if (this.pageList) {
+        const totalPage = this.pageList.length;
+        const currentPage = currentLocation.start.location;
+        // eslint-disable-next-line no-console
+        console.log(this.pageList,totalPage,currentPage)
+        if (currentPage &&  currentPage > 0) {
+          this.setPaginate(currentPage + ' / ' + totalPage)
+        } else {
+          this.setPaginate('')
+        }
+      } else {
+        this.setPaginate('')
       }
     },
     display(target, callback) {

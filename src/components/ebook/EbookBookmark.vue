@@ -143,12 +143,16 @@ export default {
         return
       }
       if(value >= this.height && value < this.threshold) {
+        // 滑动但未达到目标高度
         this.beforeThreshold(value)
       } else if (value >= this.threshold) {
+        // 达到目标高度
         this.afterThreshold(value)
       } else if (value > 0 && value < this.height) {
+        // 未达到最大高度
         this.beforeHeight()
       } else if (value === 0) {
+        // 高度还原
         this.restore()
       }
     },

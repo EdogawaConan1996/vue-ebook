@@ -36,12 +36,14 @@ export default {
       // touchStartY: 0,
       touchStartTime: 0,
       firstOffsetY: 0,
-      mouseState: null  // 1-鼠标进入 2-鼠标进入之后的移动 3-鼠标从移动状态松手 4-鼠标还原
+      mouseState: null,  // 1-鼠标进入 2-鼠标进入之后的移动 3-鼠标从移动状态松手 4-鼠标还原
+      mouseStartTime: 0
     }
   },
   methods: {
     onMouseEnter(event) {
       this.mouseState = 1;
+      this.mouseStartTime = event.timeStamp;
       event.preventDefault();
       event.stopPropagation();
     },
@@ -68,8 +70,10 @@ export default {
       } else {
         this.mouseState = 4
       }
-      // eslint-disable-next-line no-console
-      console.log(this.mouseState)
+      const time = event.timeStamp - this.mouseStartTime
+      if (time < 200) {
+        this.mouseState = 4
+      }
       event.preventDefault();
       event.stopPropagation();
     },
@@ -117,7 +121,33 @@ export default {
       this.book.ready.then(() => {
         // 用于精确分页
         return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
-      }).then(() => {
+      }).then((locations) => {
+        this.navigation.forEach(nav => {
+          nav.pageList = []
+        });
+        locations.forEach(item => {
+          const loc = item.match(/\[(.*)\]!/)[1];
+          this.navigation.forEach(nav => {
+            if (nav.href) {
+              const href = nav.href.match(/^(.*)\.html$/)[1];
+              if (href === loc) {
+                nav.pageList.push(item)
+              }
+            }
+          })
+          let currentPage = 1
+          this.navigation.forEach((nav, index) => {
+            if (index === 0) {
+              nav.page = 1
+            } else {
+              nav.page = currentPage
+            }
+            currentPage += nav.pageList.length + 1
+          })
+        });
+        // eslint-disable-next-line no-console
+        console.log(locations);
+        this.setPageList(locations);
         this.setBookAvailable(true);
         this.refreshLocation()
       })

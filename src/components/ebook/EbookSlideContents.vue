@@ -45,7 +45,7 @@
       ref="scroll">
       <div class="slide-contents-item" v-for="(item,index) in navigation" :key="index" @click="displayByNavigation(item)">
         <span class="slide-contents-item-label" :class="{'selected': section === index}" :style="contentItemStyle(item)">{{item.label}}</span>
-        <span class="slide-contents-item-page"/>
+        <span class="slide-contents-item-page">{{item.page}}</span>
       </div>
     </Scroll>
     <Scroll class="slide-search-list" :top="66" :bottom="48" v-show="searchVisible">
@@ -229,7 +229,11 @@ export default {
           line-height: px2rem(16);
           @include ellipsis();
         }
-        .slide-contents-item-page {}
+        .slide-contents-item-page {
+          flex: 0 0 px2rem(30);
+          font-size: px2rem(10);
+          @include right();
+        }
       }
     }
     .slide-search-list {
