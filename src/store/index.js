@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import Book from './modules/book'
+import StoreHome from './modules/storeHome'
 
 Vue.use(Vuex)
 
@@ -11,6 +12,7 @@ export default new Vuex.Store({
   mutations: {},
   actions: {},
   modules: {
-    Book
+    Book,
+    StoreHome
   }
 })

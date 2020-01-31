@@ -1,67 +1,20 @@
 <template>
   <div class="store-home">
     <search-bar />
-    <scroll :top="scrollTop" @onScroll="onScroll" ref="scroll">
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-      <div>12312312</div>
-    </scroll>
+    <scroll :top="scrollTop" @onScroll="onScroll" ref="scroll"></scroll>
+    <flap-card></flap-card>
   </div>
 </template>
 
 <script>
   import SearchBar from "../../components/home/SearchBar";
   import Scroll from "../../components/common/Scroll";
+  import FlapCard from '../../components/home/FlapCard';
   import storeHomeMixin from "../../mixins/storeHomeMixin";
   export default {
     name: "StoreHome",
     mixins: [storeHomeMixin],
-    components: {Scroll, SearchBar},
+    components: {Scroll, SearchBar, FlapCard},
     data() {
       return {
         scrollTop: 94
