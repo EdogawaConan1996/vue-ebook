@@ -13,6 +13,10 @@ export default {
       'setOffsetY': 'Book/setOffsetYAction',
       'setHotSearchOffsetY': 'StoreHome/setHotSearchOffsetYAction',
       'setFlapCardVisible': 'StoreHome/setFlapCardVisibleAction'
-    })
+    }),
+    showBookDetail(book) {
+      // eslint-disable-next-line no-console
+      console.log(book)
+    }
   }
 }

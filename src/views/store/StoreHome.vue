@@ -2,7 +2,7 @@
   <div class="store-home">
     <search-bar />
     <scroll :top="scrollTop" @onScroll="onScroll" ref="scroll"></scroll>
-    <flap-card></flap-card>
+    <flap-card :data="random"></flap-card>
   </div>
 </template>
 
@@ -11,13 +11,15 @@
   import Scroll from "../../components/common/Scroll";
   import FlapCard from '../../components/home/FlapCard';
   import storeHomeMixin from "../../mixins/storeHomeMixin";
+  import {home} from "../../api/store";
   export default {
     name: "StoreHome",
     mixins: [storeHomeMixin],
     components: {Scroll, SearchBar, FlapCard},
     data() {
       return {
-        scrollTop: 94
+        scrollTop: 94,
+        random: null
       }
     },
     methods: {
@@ -30,6 +32,17 @@
         }
         this.$refs.scroll.refresh()
       }
+    },
+    mounted() {
+      home().then(response => {
+        //eslint-disable-next-line no-console
+        console.log(response)
+        const randomIndex = Math.floor(Math.random() * response.random.length);
+        this.random = response.random[randomIndex]
+      }).catch(error => {
+        //eslint-disable-next-line no-console
+        console.log(error)
+      })
     }
   }
 </script>
