@@ -21,7 +21,7 @@
 </template>
 
 <script type="text/javascript">
-import TitleView from './title'
+import TitleView from './Title'
 import {categoryText} from "../../config/store";
 export default {
   name: 'category',

@@ -5,7 +5,7 @@
       <div class="featured-item-wrapper">
         <div class="featured-item" v-for="(item, index) in data" :key="index" @click="showBookDetail(item)">
           <div class="img-wrapper">
-            <img class="img" v-lazy="item.cover">
+            <img class="img" :src="item.cover">
           </div>
           <div class="content-wrapper">
             <div class="title title-small" ref="title">{{item.title}}</div>
@@ -19,10 +19,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import TitleView from './title'
-  import { realPx } from '../../utils/tools'
-  import { categoryText } from '../../config/store'
-  import storeHomeMixin from '../../mixins/storeHomeMixin'
+import TitleView from './Title'
+import { realPx } from '../../utils/tools'
+import { categoryText } from '../../config/store'
+import storeHomeMixin from '../../mixins/storeHomeMixin'
 
 export default {
   name: 'featured',

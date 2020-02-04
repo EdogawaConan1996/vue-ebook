@@ -7,7 +7,7 @@
 
 <script type="text/javascript">
 export default {
-	name: 'title',
+	name: 'title-view',
 	props: {
 		label: {
 			type: String,

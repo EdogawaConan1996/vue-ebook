@@ -4,7 +4,7 @@
     <div class="guess-you-like-list">
       <div class="guess-you-like-item" v-for="(item, index) in showData" :key="index" @click="showBookDetail(item)">
         <div class="img-wrapper">
-          <img class="img" v-lazy="item.cover" :key="item.cover">
+          <img class="img"  :src="item.cover" :key="item.cover">
         </div>
         <div class="content-wrapper">
           <div class="title title-big" ref="title">{{item.title}}</div>
@@ -17,7 +17,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import TitleView from './title'
+  import TitleView from './Title'
   import { realPx } from '../../utils/tools'
   import storeHomeMixin from "../../mixins/storeHomeMixin";
 
@@ -32,6 +32,8 @@
     watch: {
       data(v) {
         this.total = v.length / 3
+        //eslint-disable-next-line no-console
+        console.log(this.total)
       }
     },
     computed: {
@@ -58,6 +60,8 @@
     },
     methods: {
       change() {
+        //eslint-disable-next-line no-console
+        console.log(this.index)
         if (this.index + 1 >= this.total) {
           this.index = 0
         } else {

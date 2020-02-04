@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import TitleView from './title';
+import TitleView from './Title';
 import {categoryText, getCategoryName} from "../../config/store";
 import storeHomeMixin from "../../mixins/storeHomeMixin";
 export default {
@@ -24,9 +24,9 @@ export default {
   mixins: [storeHomeMixin],
   props: {
     data: {
-      type: Array,
+      type: Object,
       default() {
-        return []
+        return {}
       }
     }
   },
