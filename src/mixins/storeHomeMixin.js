@@ -17,6 +17,13 @@ export default {
     showBookDetail(book) {
       // eslint-disable-next-line no-console
       console.log(book)
+      this.$router.push({
+        path: '/store/detail',
+        query: {
+          fileName: book.fileName,
+          category: book.category
+        }
+      })
     }
   }
 }

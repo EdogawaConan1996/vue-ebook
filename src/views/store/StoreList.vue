@@ -1,5 +1,5 @@
 <template>
-
+  <div class="book-list-wrapper"></div>
 </template>
 
 <script>
