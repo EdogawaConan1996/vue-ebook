@@ -1,14 +1,14 @@
 <template>
   <div class="book-detail">
     <detail-title />
-    <scroll class="content-wrapper" :top="42" :bottom="52" @onScroll="onscroll" ref="scroll">
+    <scroll class="content-wrapper" :top="42" :bottom="52" @onScroll="onScroll" ref="scroll">
       <detail-info :cover="cover"
                    :title="title"
                    :author="author"
                    :desc="desc" />
       <div class="book-detail-content-wrapper">
-        <div class="book-detail-content-title">{{$t('detail.copyRight')}}</div>
-        <div class="book-detail-list-wrapper">
+        <div class="book-detail-content-title">{{$t('detail.copyright')}}</div>
+        <div class="book-detail-content-list-wrapper">
           <div class="book-detail-content-row">
             <div class="book-detail-content-label">{{$t('detail.publisher')}}</div>
             <div class="book-detail-content-text">{{publisher}}</div>
@@ -71,7 +71,7 @@
   import DetailTitle from "../../components/detail/DetailTitle";
   import Scroll from "../../components/common/Scroll";
   import Toast from "../../components/common/Toast";
-  import {Epub} from "epubjs";
+  import Epub from "epubjs";
   import DetailInfo from "../../components/detail/DetailInfo";
   import {addToShelf, removeFromBookShelf} from "../../config/store";
   import {getLocalStorage} from "../../utils/storage";

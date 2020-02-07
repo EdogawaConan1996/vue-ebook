@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="toast-bg" v-show="visbile">
+    <div class="toast-bg" v-show="visible">
       <div class="toast-wrapper">
         <div class="toast" v-html="text"></div>
       </div>

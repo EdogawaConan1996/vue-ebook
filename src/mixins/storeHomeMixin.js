@@ -21,7 +21,7 @@ export default {
         path: '/store/detail',
         query: {
           fileName: book.fileName,
-          category: book.category
+          category: book.categoryText
         }
       })
     }
