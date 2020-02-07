@@ -22,7 +22,7 @@
 
 <script type="text/javascript">
 import TitleView from './Title'
-import {categoryText} from "../../config/store";
+import {categoryText, getCategoryName} from "../../config/store";
 export default {
   name: 'category',
   components: {
@@ -37,14 +37,20 @@ export default {
     }
   },
   methods: {
-    showBookCategory() {
-
+    showBookCategory(item) {
+      this.$router.push({
+        path: '/store/list',
+        query: {
+          category: getCategoryName(item.category),
+          categoryText: this.categoryText(item.category)
+        }
+      })
     },
     categoryText(category) {
       return categoryText(category, this)
     },
     showBookList() {
-
+      this.$router.push('/store/list')
     }
   }
 }

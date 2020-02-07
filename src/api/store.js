@@ -19,12 +19,19 @@ export const flatList = () => {
     method: 'get',
     url: `book/flat-list`
   })
-}
+};
 
 export const detail = (params) => {
-  return axios({
+  return axios.request({
     method: 'get',
     url: `/book/detail`,
     params
+  })
+};
+
+export const list = () => {
+  return axios.request({
+    method: 'get',
+    url: '/book/list'
   })
 }

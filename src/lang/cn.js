@@ -111,7 +111,8 @@ const messages = {
     read: '阅读',
     listen: '听书',
     addOrRemoveShelf: '加入书架',
-    isAddedToShelf: '已加入书架'
+    isAddedToShelf: '已加入书架',
+    title: '书本详情'
   },
   speak: {
     voice: '语音朗读',

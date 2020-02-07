@@ -1,6 +1,6 @@
 <template>
   <div class="book-detail">
-    <detail-title />
+    <detail-title @back="back" :title="$t('detail.title')" :showShelf="true" ref="title"/>
     <scroll class="content-wrapper" :top="42" :bottom="52" @onScroll="onScroll" ref="scroll">
       <detail-info :cover="cover"
                    :title="title"
@@ -77,7 +77,7 @@
   import {getLocalStorage} from "../../utils/storage";
   import {getLocalForage} from "../../utils/localforage";
   import {detail, flatList} from "../../api/store";
-  import {px2rem} from "../../utils/tools";
+  import {px2rem, realPx} from "../../utils/tools";
 
   global.ePub = Epub;
 
@@ -159,16 +159,17 @@
         this.$refs.toast.show()
       },
       readBook() {
-        // eslint-disable-next-line no-undef
+        // eslint-disable-next-line no-console
+        console.log(this.bookItem);
         getLocalForage(this.bookItem.fileName, (err, value) => {
           if (!err && value instanceof Blob) {
             this.$router.push({
-              path: `/ebook/${this.bookItem.fileName}`
+              path: `/ebook/${this.bookItem.categoryText}|${this.bookItem.fileName}`
             })
           } else {
-            // this.showToast(this.$t('shelf.downloadFirst'))
+            this.showToast(this.$t('shelf.downloadFirst'))
             this.$router.push({
-              path: `/ebook/${this.bookItem.fileName}`,
+              path: `/ebook/${this.bookItem.categoryText}|${this.bookItem.fileName}`,
               query: {
                 opf: this.opf
               }
@@ -293,8 +294,8 @@
             fileName
           }
           detail(params).then(response => {
-            if (response.status === 200 && response.data.error_code === 0 && response.data.data) {
-              const data = response.data.data
+            if (response.data) {
+              const data = response.data
               this.bookItem = data
               this.cover = this.bookItem.cover
               let rootFile = data.rootFile
@@ -303,9 +304,9 @@
               }
               this.opf = `${process.env.VUE_APP_EPUB_OPF_URL}/${fileName}/${rootFile}`
               this.parseBook(this.opf)
-            } else {
-              this.showToast(response.data.msg)
             }
+          }).catch(error => {
+            this.showToast(error.message)
           })
         }
         this.bookShelf = getLocalStorage('bookShelf')

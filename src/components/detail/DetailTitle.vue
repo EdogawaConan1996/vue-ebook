@@ -3,11 +3,11 @@
     <div class="title-left-wrapper" @click="back">
       <span class="icon-back" />
     </div>
+    <div class="title-text" v-if="title">{{title}}</div>
     <div class="title-right-wrapper">
       <span class="icon-shelf icon" v-if="showShelf" @click="showBookShelf"/>
       <span class="icon-share" v-else/>
     </div>
-    <div class="title-text" v-if="title">{{title}}</div>
   </div>
 </template>
 
@@ -62,23 +62,20 @@ export default {
     .title-left-wrapper {
       position: relative;
       z-index: 100;
-      flex: 1;
+      flex: 0 0 px2rem(42);
       margin-left: px2rem(15);
       @include left;
     }
     .title-right-wrapper {
       position: relative;
       z-index: 200;
-      flex: 1;
+      flex: 0 0 px2rem(42);
       margin-right: px2rem(15);
       @include right;
     }
     .title-text {
-      position: absolute;
-      top: 0;
-      left: 0;
       z-index: 100;
-      width: 100%;
+      flex: 1;
       height: px2rem(42);
       font-size: px2rem(16);
       color: #333;

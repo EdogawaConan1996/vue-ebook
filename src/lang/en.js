@@ -111,7 +111,8 @@ const messages = {
     read: 'Read',
     listen: 'Listen',
     addOrRemoveShelf: 'Add to Book Shelf',
-    isAddedToShelf: 'Added to BookShelf'
+    isAddedToShelf: 'Added to BookShelf',
+    title: 'Book Detail'
   },
   speak: {
     voice: 'Voice Reading',
