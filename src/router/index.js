@@ -37,6 +37,10 @@ export default new Router({
           path: 'detail',
           component: () => import('../views/store/StoreDetail')
         },
+        {
+          path: 'shelf',
+          component: () => import('../views/store/StoreShelf')
+        },
       ]
     }
   ]

@@ -268,15 +268,6 @@ export function removeBookCache(fileName) {
 	})
 }
 
-export function switchLocale(vue) {
-	if (vue.$i18n.locale === 'en') {
-		vue.$i18n.locale = 'cn'
-	} else {
-		vue.$i18n.locale = 'en'
-	}
-	setLocalStorage('locale', vue.$i18n.locale)
-}
-
 export function reset(vue) {
 	vue.$store.dispatch('setMenuVisible', false)
 	vue.$store.dispatch('setSettingVisible', 0)

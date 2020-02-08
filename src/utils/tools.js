@@ -1,3 +1,5 @@
+import {setLocalStorage} from "./storage";
+
 export function px2rem(px) {
   const ratio = 375 / 10
   return px / ratio
@@ -22,4 +24,13 @@ export function flatten(array) {
 
 export function find(navigation, item, level=0) {
   return item.parent ? find(navigation,navigation.filter(parentItem => parentItem.id === item.parent)[0], ++level) : level
+}
+
+export function switchLocale(vue) {
+  if (vue.$i18n.locale === 'en') {
+    vue.$i18n.locale = 'cn'
+  } else {
+    vue.$i18n.locale = 'en'
+  }
+  setLocalStorage('locale', vue.$i18n.locale)
 }
