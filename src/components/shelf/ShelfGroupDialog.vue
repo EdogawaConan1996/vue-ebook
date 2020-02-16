@@ -7,12 +7,14 @@
             <span class="dialog-title-text">{{$t('shelf.moveBook')}}</span>
           </div>
           <div class="dialog-list-wrapper">
-            <div class="dialog-list-item" :class="{'is-add': item.edit ? item.edit === 1 : false}" v-for="(item, index) in categoryList" :key="index" @click="onGroupClick(item)" v-if="(item.edit === 2 && isInGroup) || item.edit !== 2 || !item.edit">
-              <div class="dialog-list-item-text">{{item.title}}</div>
-              <div class="dialog-list-icon-wrapper" v-if="category && item.id ? category.id === item.id : false">
-                <span class="icon-check"></span>
+            <template v-for="(item, index) in categoryList">
+              <div class="dialog-list-item" :class="{'is-add': item.edit ? item.edit === 1 : false}" :key="index" @click="onGroupClick(item)" v-if="(item.edit === 2 && isInGroup) || item.edit !== 2 || !item.edit">
+                <div class="dialog-list-item-text">{{item.title}}</div>
+                <div class="dialog-list-icon-wrapper" v-if="category && item.id ? category.id === item.id : false">
+                  <span class="icon-check"/>
+                </div>
               </div>
-            </div>
+            </template>
           </div>
         </div>
         <div class="dialog-btn-wrapper" @click="hide">

@@ -1,30 +1,30 @@
 <template>
-  <div class="shelf-search-wrapper" :class="{'search-top': ifShowCancel, 'hide-shadow': ifHideShadow}">
-    <div class="shelf-search" :class="{'search-top': ifShowCancel}">
+  <div class="shelf-search-wrapper" :class="{'search-top': ifInputClicked, 'hide-shadow': ifHideShadow && ifInputClicked}">
+    <div class="shelf-search" :class="{'search-top': ifInputClicked}">
       <div class="search-wrapper">
         <div class="icon-search-wrapper">
           <span class="icon-search icon"/>
         </div>
         <div class="search-input-wrapper">
           <input class="search-input" type="text" :placeholder="$t('shelf.search')" @input="checkSearchText"
-                 @click="onSearchClick" v-model="searchText" ref="searchInput">
+                 @click="onSearchClick" v-model.trim="searchText" ref="searchInput">
         </div>
-        <div class="icon-clear-wrapper" @click="clearSearchText" v-if="ifShowClear">
+        <div class="icon-clear-wrapper" @click="clearSearchText" v-if="searchText.length > 0">
           <span class="icon-close-circle-fill icon"/>
-        </div>
+         </div>
       </div>
-      <div class="icon-clock-wrapper" v-if="!ifShowCancel" @click="showReadHistory">
-        <span class="icon-cn icon" v-if="lang() === 'cn'"/>
+      <div class="icon-locale-wrapper" v-if="ifInputClicked" @click="switchLocale">
+        <span class="icon-cn icon" v-if="lang === 'cn'"/>
         <span class="icon-en icon" v-else/>
       </div>
-      <div class="cancel-btn-wrapper" v-else @click="onCancel">
+      <div class="cancel-btn-wrapper" v-else @click="onCancelClick">
         <span class="cancel-btn">{{$t('shelf.cancel')}}</span>
       </div>
     </div>
     <transition name="shelf-tab-slide-up">
-      <div class="tab-wrapper" v-if="ifShowCancel">
-        <div class="tab-item" v-for="(item, index) in tabs" :key="index" @click="onTabClick(item)">
-          <span class="tab-item-text" :class="{'is-selected': item.selected}" v-if="showShadow">{{item.text}}</span>
+      <div class="tab-wrapper" v-if="ifInputClicked">
+        <div class="tab-item" v-for="(item, index) in tabs" :key="index" @click="onTabClick(item.id)">
+          <span class="tab-item-text" :class="{'is-selected': item.id === selectTab}" v-if="ifHideShadow">{{item.text}}</span>
         </div>
       </div>
     </transition>
@@ -32,72 +32,61 @@
 </template>
 
 <script>
-  import {getLocalStorage} from "../../utils/storage";
-  import {switchLocale} from "../../utils/tools";
+  import {setLocalStorage} from "../../utils/storage";
+  import storeShelfMixin from "../../mixins/storeShelfMixin";
 
   export default {
     name: 'ShelfSearch',
+    mixins: [storeShelfMixin ],
     computed: {
+      lang() {
+        return this.$i18n.locale
+      },
       tabs() {
         return [
           {
             id: 1,
-            text: this.$t('shelf.default'),
-            selected: true
+            text: this.$t('shelf.default')
           },
           {
             id: 2,
-            text: this.$t('shelf.progress'),
-            selected: false
+            text: this.$t('shelf.progress')
           },
           {
             id: 3,
-            text: this.$t('shelf.purchase'),
-            selected: false
+            text: this.$t('shelf.purchase')
           }
         ]
       }
     },
     data() {
       return {
+        ifInputClicked: false,
+        searchText: '',
+        selectTab: 1,
         ifShowCancel: false,
         ifShowClear: false,
         ifHideShadow: true,
-        searchText: ''
       }
     },
     methods: {
-      lang() {
-        return getLocalStorage('locale')
+      switchLocale() {
+        if (this.lang === 'cn') {
+          this.$i18n.locale = 'en'
+        } else {
+          this.$i18n.locale = 'cn'
+        }
+        setLocalStorage('locale', this.$i18n.locale )
       },
-      showReadHistory() {
-        switchLocale(this)
+      onTabClick(id) {
+        this.selectTab = id
       },
-      onTabClick(item) {
-        this.tabs.forEach(tab => {
-          if (tab.id === item.id) {
-            tab.selected = true
-          } else {
-            tab.selected = false
-          }
-        })
-        this.$emit('onTabClick', item.id)
-        this.$forceUpdate()
-      },
-      showShadow() {
-        this.ifHideShadow = false
-      },
-      hideShadow() {
-        this.ifHideShadow = true
-      },
-      onCancel() {
-        this.$emit('onCancel')
-        this.ifShowCancel = false
+      onCancelClick() {
+        this.ifInputClicked = false
+        this.setShelfTitleVisible(true)
       },
       clearSearchText() {
         this.searchText = ''
-        this.checkSearchText()
-        this.$refs.searchInput.focus()
       },
       checkSearchText() {
         if (this.searchText && this.searchText.length > 0) {
@@ -107,8 +96,13 @@
         }
       },
       onSearchClick() {
-        this.$emit('onSearchClick')
-        this.ifShowCancel = true
+        this.ifInputClicked = true
+        this.setShelfTitleVisible(false)
+      }
+    },
+    watch: {
+      offsetY(val) {
+        this.ifHideShadow = val <= 0 && this.ifInputClicked;
       }
     }
   }
@@ -187,7 +181,7 @@
           }
         }
       }
-      .icon-clock-wrapper {
+      .icon-locale-wrapper {
         flex: 0 0 px2rem(55);
         @include center;
         .icon-cn, .icon-en {

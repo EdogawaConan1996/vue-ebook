@@ -3,8 +3,9 @@ import Vuex from 'vuex';
 
 import Book from './modules/book'
 import StoreHome from './modules/storeHome'
+import StoreShelf from './modules/storeShelf'
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {},
@@ -13,6 +14,8 @@ export default new Vuex.Store({
   actions: {},
   modules: {
     Book,
-    StoreHome
+    StoreHome,
+    StoreShelf
   }
-})
+});
+

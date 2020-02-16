@@ -2,7 +2,7 @@
   <div class="shelf-category-wrapper">
     <div class="shelf-category" :class="{'is-edit': isEditMode}" v-if="data.itemList.length > 0">
       <div class="shelf-category-item" v-for="(item, index) in data.itemList" :key="index">
-        <img class="shelf-category-img" :src="item.cover"/>
+        <img class="shelf-category-img" :src="item.cover" alt="no pic"/>
       </div>
     </div>
     <div class="shelf-category-bg" v-else>

@@ -2,14 +2,12 @@
   <div class="store-shelf">
     <shelf-title class="shelf-title"
                  :title="$t('shelf.title')"
-                 :isEditMode.sync="isEditMode"
                  :data="bookList"
                  :ifShowBack="ifShowBack"
                  :ifShowClear="ifShowClear"
                  @onEditClick="onEditClick"
                  @clearCache="clearCache"
-                 ref="shelfTitle"
-                 v-show="ifShowTitle"/>
+                 ref="shelfTitle"/>
     <scroll class="store-shelf-scroll-wrapper"
             :top="0"
             :bottom="scrollBottom"
@@ -37,12 +35,13 @@
 
 <script>
   import ShelfTitle from "../../components/shelf/ShelfTitle";
-  import {Epub} from "epubjs";
+  import Epub from "epubjs";
   import {clearLocalStorage, getLocalStorage, setLocalStorage} from "../../utils/storage";
   import {clearLocalForage, getLocalForage} from "../../utils/localforage";
   import {removeBookCache} from "../../config/store";
   import {realPx} from "../../utils/tools";
   import {download, shelf} from "../../api/store";
+  import storeShelfMixin from '../../mixins/storeShelfMixin';
   import Scroll from "../../components/common/Scroll";
   import ShelfSearch from "../../components/shelf/ShelfSearch";
   import ShelfList from "../../components/shelf/ShelfList";
@@ -51,6 +50,7 @@
 
   const BOOK_SHELF_KEY = 'bookShelf'
   export default {
+    mixins: [storeShelfMixin],
     components: {
       ShelfListEmpty,
       ShelfList,
@@ -67,7 +67,6 @@
       return {
         bookList: [],
         ifShowTitle: true,
-        isEditMode: false,
         ifShowBack: false,
         ifShowClear: true,
         scrollBottom: 0,
@@ -196,6 +195,8 @@
         this.showToast(this.$t('shelf.clearCacheSuccess'))
       },
       onBookClick(item, index) {
+        // eslint-disable-next-line no-console
+        console.log(index);
         this.$router.push({
           path: '/store/detail',
           query: {
@@ -294,7 +295,7 @@
         }
       },
       onEditClick(v) {
-        this.isEditMode = v
+        this.setIsEditMode(v)
         if (!this.isEditMode) {
           this.bookList.forEach(item => {
             if (item.bookId) {
@@ -339,23 +340,13 @@
         this.ifShowTitle = false
       },
       onScroll(offsetY) {
-        if (offsetY > realPx(54)) {
-          this.$refs.shelfTitle.showShadow()
-          if (!this.ifShowTitle) {
-            this.$refs.shelfSearch.showShadow()
-          }
-        } else {
-          this.$refs.shelfTitle.hideShadow()
-          if (this.$refs.shelfSearch) {
-            this.$refs.shelfSearch.hideShadow()
-          }
-        }
+        this.setOffsetY(offsetY)
       },
       getBookShelf() {
         this.bookList = this.getBookShelfFromLocalStorage()
         if (!this.bookList) {
           shelf().then(response => {
-            this.bookList = response.data.bookList
+            this.bookList = response.bookList
             if (!this.bookList) {
               this.bookList = []
             }

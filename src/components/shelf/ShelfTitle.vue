@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="shelf-title-wrapper">
+    <div class="shelf-title-wrapper" :class="{'hide-shadow': ifHideShadow}" v-show="shelfTitleVisible">
       <div class="title">
         <span class="title-text">{{title}}</span>
         <span class="sub-title-text" v-show="isEditMode">{{selectedText}}</span>
@@ -23,20 +23,20 @@
       <div class="btn-back-wrapper" @click="changeGroup" v-if="ifShowBack && isEditMode">
         <span class="btn-text">{{$t('shelf.editGroup')}}</span>
       </div>
+      <popup ref="popup"
+             :title="popupTitle"
+             :third-text="thirdText"
+             :confirm-text="confirmText"
+             :is-remove-text="true"
+             :cancel-text="$t('shelf.cancel')"
+             @confirm="onPopupDelete"
+             @third="onPopupChange"/>
+      <shelf-group-dialog :visible.sync="ifGroupDialogShow"
+                          :isEditGroupName="true"
+                          :category="category"
+                          @editGroupName="editGroupName"
+                          ref="groupDialog"/>
     </div>
-    <popup ref="popup"
-           :title="popupTitle"
-           :third-text="thirdText"
-           :confirm-text="confirmText"
-           :is-remove-text="true"
-           :cancel-text="$t('shelf.cancel')"
-           @confirm="onPopupDelete"
-           @third="onPopupChange"/>
-    <shelf-group-dialog :visible.sync="ifGroupDialogShow"
-                        :isEditGroupName="true"
-                        :category="category"
-                        @editGroupName="editGroupName"
-                        ref="groupDialog"/>
   </transition>
 </template>
 
@@ -44,14 +44,12 @@
   import Popup from "../common/Popup";
   import ShelfGroupDialog from "./ShelfGroupDialog";
   import {switchLocale} from "../../utils/tools";
+  import storeShelfMixin from '../../mixins/storeShelfMixin';
   export default {
     name: "ShelfTitle",
     components: {ShelfGroupDialog, Popup},
+    mixins: [storeShelfMixin],
     props: {
-      isEditMode: {
-        type: Boolean,
-        default: false
-      },
       ifShowBack: {
         type: Boolean,
         default: false
@@ -86,16 +84,8 @@
         return !this.data || this.data.filter(item => item.type !== 3).length === 0
       },
       selectedText() {
-        return this.selectedNumber === 0 ? this.$t('shelf.selectBook') : (this.selectedNumber === 1 ? this.$t('shelf.haveSelectedBook').replace('$1', this.selectedNumber) : this.$t('shelf.haveSelectedBooks').replace('$1', this.selectedNumber))
-      },
-      selectedNumber() {
-        if (this.category && this.category.itemList) {
-          return this.category.itemList.filter(item => item.selected).length
-        } else if (this.data) {
-          return this.data.filter(item => item.selected).length
-        } else {
-          return 0
-        }
+        const selectedNumber = this.shelfSelected ? this.shelfSelected.length : 0
+        return selectedNumber === 0 ? this.$t('shelf.selectBook') : (selectedNumber === 1 ? this.$t('shelf.haveSelectedBook').replace('$1', selectedNumber) : this.$t('shelf.haveSelectedBooks').replace('$1', selectedNumber))
       },
       thirdText() {
         if (this.isDeleteGroup) {
@@ -161,18 +151,13 @@
       clearCache() {
         this.$emit('clearCache')
       },
-      showShadow() {
-        this.ifHideShadow = false
-      },
-      hideShadow() {
-        this.ifHideShadow = true
-      },
       onEditClick() {
-        if (this.isEditMode) {
-          this.$emit('onEditClick', false)
-        } else {
-          this.$emit('onEditClick', true)
-        }
+        this.setIsEditMode(!this.isEditMode)
+      }
+    },
+    watch: {
+      offsetY(val) {
+        this.ifHideShadow = val <= 0;
       }
     }
   }

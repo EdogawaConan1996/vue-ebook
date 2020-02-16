@@ -1,28 +1,20 @@
 export default {
   namespaced: true,
   state: {
-    hotSearchOffsetY: 0,
-    flapCardVisible: false,
     isEditMode: false,
     shelfList: [],
     shelfSelected: [],
-    shelfTitleVisible: false
+    shelfTitleVisible: false,
+    offsetY: 0
   },
   getters: {
-    getHotSearchOffsetY: state => state.hotSearchOffsetY,
-    getFlapCardVisible: state => state.flapCardVisible,
     getIsEditMode: state => state.isEditMode,
     getShelfList: state => state.shelfList,
     getShelfSelected: state => state.shelfSelected,
-    getShelfTitleVisible: state => state.shelfTitleVisible
+    getShelfTitleVisible: state => state.shelfTitleVisible,
+    getOffsetY: state => state.offsetY
   },
   mutations: {
-    setHotSearchOffsetY: (state, hotSearchOffsetY) => {
-      state.hotSearchOffsetY = hotSearchOffsetY;
-    },
-    setFlapCardVisible: (state, flapCardVisible) => {
-      state.flapCardVisible = flapCardVisible
-    },
     setIsEditMode: (state, isEditMode) => {
       state.isEditMode = isEditMode
     },
@@ -34,15 +26,12 @@ export default {
     },
     setShelfTitleVisible: (state, shelfTitleVisible) => {
       state.shelfTitleVisible = shelfTitleVisible
+    },
+    setOffsetY: (state, offsetY) => {
+      state.offsetY = offsetY
     }
   },
   actions: {
-    setHotSearchOffsetYAction: ({ commit }, hotSearchOffsetY) => {
-      commit('setHotSearchOffsetY', hotSearchOffsetY);
-    },
-    setFlapCardVisibleAction: ({ commit }, flapCardVisible) => {
-      commit('setFlapCardVisible', flapCardVisible)
-    },
     setIsEditModeAction: ({ commit }, isEditMode) => {
       commit('setIsEditMode', isEditMode);
     },
@@ -54,6 +43,10 @@ export default {
     },
     setShelfTitleVisibleAction: ({ commit }, shelfTitleVisible) => {
       commit('setShelfTitleVisible', shelfTitleVisible)
+    },
+    setOffsetYAction: ({ commit }, offsetY) => {
+      commit('setOffsetY', offsetY)
     }
   }
+
 };

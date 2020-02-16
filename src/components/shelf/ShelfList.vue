@@ -43,8 +43,8 @@
 </template>
 
 <script>
-  import ShelfCategory from './shelfCategory'
-  import ShelfImage from './shelfImage'
+  import ShelfCategory from './ShelfCategory'
+  import ShelfImage from './ShelfImage'
   import { realPx } from '../../utils/tools'
   import { flatBookList } from '../../config/store'
 
@@ -62,11 +62,13 @@
       ShelfImage
     },
     computed: {
-      bookData() {
+      bookData () {
         if (this.showType === 0) {
           return this.data
         } else if (this.showType === 1) {
           return flatBookList(this.data)
+        } else {
+          return []
         }
       },
       publicNumber() {
