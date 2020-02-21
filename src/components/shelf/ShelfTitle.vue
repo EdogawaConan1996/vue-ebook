@@ -2,23 +2,32 @@
   <div class="shelf-title">
     <div class="shelf-title-text-wrapper">
       <span class="shelf-title-text">{{$t('shelf.title')}}</span>
-      <span class="shelf-title-sub-text">{{selectedText}}</span>
+      <span class="shelf-title-sub-text" v-show="isEditMode">{{selectedText}}</span>
     </div>
     <div class="shelf-title-btn-wrapper shelf-title-left">
       <span class="shelf-title-btn-text">{{$t('shelf.clearCache')}}</span>
     </div>
     <div class="shelf-title-btn-wrapper shelf-title-right">
-      <span class="shelf-title-btn-text">{{$t('shelf.edit')}}</span>
+      <span class="shelf-title-btn-text" @click="onEditClick">{{isEditMode ? $t('shelf.cancel') : $t('shelf.edit')}}</span>
     </div>
   </div>
 </template>
 
 <script>
+  import {storeShelfMixin} from "../../mixins/storeShelfMixin";
+
   export default {
     name: "ShelfTitle",
+    mixins: [storeShelfMixin],
     computed: {
       selectedText() {
-        return this.$t('shelf.selectBook')
+        const selectedNumber = this.shelfSelected ? this.shelfSelected.length : 0;
+        return selectedNumber <= 0 ? this.$t('shelf.selectBook') : (selectedNumber === 1 ? this.$t('shelf.haveSelectedBook').replace('$1', selectedNumber) : this.$t('shelf.haveSelectedBooks').replace('$1', selectedNumber))
+      }
+    },
+    methods: {
+      onEditClick() {
+        this.setIsEditMode(!this.isEditMode)
       }
     }
   }
