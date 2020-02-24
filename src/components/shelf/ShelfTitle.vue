@@ -40,6 +40,7 @@
     width: 100%;
     height: px2rem(42);
     background: #fff;
+    z-index: 130;
     .shelf-title-text-wrapper {
       position: absolute;
       top: 0;
