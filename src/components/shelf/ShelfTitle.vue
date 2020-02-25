@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="shelf-title" v-if="shelfTitleVisible">
+    <div class="shelf-title" :class="{'hide-shadow': ifHideShadow}" v-if="shelfTitleVisible">
       <div class="shelf-title-text-wrapper">
         <span class="shelf-title-text">{{$t('shelf.title')}}</span>
         <span class="shelf-title-sub-text" v-show="isEditMode">{{selectedText}}</span>
@@ -21,6 +21,11 @@
   export default {
     name: "ShelfTitle",
     mixins: [storeShelfMixin],
+    data() {
+      return {
+        ifHideShadow: true
+      }
+    },
     computed: {
       selectedText() {
         const selectedNumber = this.shelfSelected ? this.shelfSelected.length : 0;
@@ -30,6 +35,15 @@
     methods: {
       onEditClick() {
         this.setIsEditMode(!this.isEditMode)
+      }
+    },
+    watch: {
+      offsetY(val) {
+        if (val > 0) {
+          this.ifHideShadow = false
+        } else {
+          this.ifHideShadow = true
+        }
       }
     }
   }
@@ -43,6 +57,10 @@
     height: px2rem(42);
     background: #fff;
     z-index: 130;
+    box-shadow: 0 px2rem(2) px2rem(2) 0 rgba(0,0,0,.1);
+    &.hide-shadow {
+      box-shadow: none
+    }
     .shelf-title-text-wrapper {
       position: absolute;
       top: 0;

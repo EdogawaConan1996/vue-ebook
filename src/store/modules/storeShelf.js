@@ -4,13 +4,15 @@ export default {
     isEditMode: false,
     shelfList: [],
     shelfSelected: [],
-    shelfTitleVisible: true
+    shelfTitleVisible: true,
+    offsetY: 0
   },
   getters: {
     getIsEditMode: state => state.isEditMode,
     getShelfList: state => state.shelfList,
     getShelfSelected: state => state.shelfSelected,
-    getShelfTitleVisible: state => state.shelfTitleVisible
+    getShelfTitleVisible: state => state.shelfTitleVisible,
+    getOffsetY: state => state.offsetY
   },
   mutations: {
     setIsEditMode: (state, isEditMode) => {
@@ -24,6 +26,9 @@ export default {
     },
     setShelfTitleVisible: (state, shelfTitleVisible) => {
       state.shelfTitleVisible = shelfTitleVisible
+    },
+    setOffsetY: (state, offsetY) => {
+      state.offsetY = offsetY
     }
   },
   actions: {
@@ -38,6 +43,9 @@ export default {
     },
     setShelfTitleVisibleAction: ({commit}, shelfTitleVisible) => {
       commit('setShelfTitleVisible', shelfTitleVisible)
+    },
+    setOffsetYAction: ({commit}, offsetY) => {
+      commit('setOffsetY', offsetY)
     }
   }
 }

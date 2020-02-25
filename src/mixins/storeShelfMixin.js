@@ -6,7 +6,8 @@ export const storeShelfMixin = {
       'isEditMode': 'StoreShelf/getIsEditMode',
       'shelfList': 'StoreShelf/getShelfList',
       'shelfSelected': 'StoreShelf/getShelfSelected',
-      'shelfTitleVisible': 'StoreShelf/getShelfTitleVisible'
+      'shelfTitleVisible': 'StoreShelf/getShelfTitleVisible',
+      'offsetY': 'StoreShelf/getOffsetY'
     })
   },
   methods: {
@@ -14,7 +15,8 @@ export const storeShelfMixin = {
       'setIsEditMode': 'StoreShelf/setIsEditModeAction',
       'setShelfList': 'StoreShelf/setShelfListAction',
       'setShelfSelected': 'StoreShelf/setShelfSelectedAction',
-      'setShelfTitleVisible': 'StoreShelf/setShelfTitleVisibleAction'
+      'setShelfTitleVisible': 'StoreShelf/setShelfTitleVisibleAction',
+      'setOffsetY': 'StoreShelf/setOffsetYAction'
     })
   }
 };
