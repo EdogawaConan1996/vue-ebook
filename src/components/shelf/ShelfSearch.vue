@@ -1,33 +1,92 @@
 <template>
   <div class="shelf-search-wrapper">
-    <div class="shelf-search">
+    <div class="shelf-search" :class="{'search-top': ifInputClicked}">
       <div class="search-wrapper">
         <div class="icon-search-wrapper">
           <span class="icon-search icon" />
         </div>
         <div class="search-input-wrapper">
-          <label>
-            <input :placeholder="$t('shelf.search')" class="search-input" type="text"/>
-          </label>
+          <input :placeholder="$t('shelf.search')" class="search-input" type="text" @click="onSearchClick" v-model.trim="searchText"/>
         </div>
-        <div class="icon-clear-wrapper">
+        <div class="icon-clear-wrapper" v-show="searchText" @click="onSearchClear">
           <span class="icon-close-circle-fill icon" />
         </div>
       </div>
-      <div class="icon-locale-wrapper">
-        <span class="icon-cn icon" />
-        <span class="icon-en icon" />
+      <div class="icon-locale-wrapper" v-if="!ifInputClicked" @click="handleSwitchLocale">
+        <span class="icon-cn icon" v-if="lang === 'cn'"/>
+        <span class="icon-en icon" v-else/>
       </div>
-      <div class="cancel-btn-wrapper">
+      <div class="cancel-btn-wrapper" v-if="ifInputClicked" @click="onCancelClick">
         <span class="cancel-text">{{$t('shelf.cancel')}}</span>
       </div>
     </div>
+    <transition name="shelf-tab-slide-up">
+      <div class="shelf-search-tab-wrapper" v-if="ifInputClicked">
+        <div class="shelf-search-tab-item" v-for="item in tabs" :key="item.id" @click="onTabClicked(item.id)">
+          <span class="shelf-search-tab-text" :class="{'is-selected': item.id === selectedTab}">{{item.text}}</span>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
+  import {switchLocale} from "../../config/store";
+  import {storeShelfMixin} from "../../mixins/storeShelfMixin";
+
   export default {
-    name: "ShelfSearch"
+    name: "ShelfSearch",
+    mixins: [storeShelfMixin],
+    data() {
+      return {
+        ifInputClicked: false,
+        searchText: '',
+        selectedTab: 1
+      }
+    },
+    computed: {
+      lang() {
+        return this.$i18n.locale
+      },
+      tabs() {
+        return [
+          {
+            id: 1,
+            text: this.$t('shelf.default'),
+            selected: true
+          },
+          {
+            id: 2,
+            text: this.$t('shelf.progress'),
+            selected: false
+          },
+          {
+            id: 3,
+            text: this.$t('shelf.purchase'),
+            selected: false
+          }
+        ]
+      }
+    },
+    methods: {
+      onSearchClick() {
+        this.ifInputClicked = true
+        this.setShelfTitleVisible(false)
+      },
+      onCancelClick() {
+        this.ifInputClicked = false
+        this.setShelfTitleVisible(true)
+      },
+      handleSwitchLocale() {
+        switchLocale(this)
+      },
+      onSearchClear() {
+        this.searchText = ''
+      },
+      onTabClicked(id) {
+        this.selectedTab = id
+      }
+    }
   }
 </script>
 
@@ -48,6 +107,10 @@
       display: flex;
       width: 100%;
       height: px2rem(52);
+      transition: top $animationTime linear;
+      &.search-top {
+        top: 0
+      }
       .search-wrapper {
         flex: 1;
         display: flex;
@@ -103,6 +166,26 @@
         .cancel-text {
           font-size: px2rem(14);
           color: $color-blue;
+        }
+      }
+    }
+    .shelf-search-tab-wrapper {
+      position: absolute;
+      top: px2rem(52);
+      left: 0;
+      z-index: 100;
+      display: flex;
+      width: 100%;
+      height: px2rem(42);
+      .shelf-search-tab-item {
+        flex: 1;
+        @include center;
+        .shelf-search-tab-text {
+          font-size: px2rem(12);
+          color: #999;
+          &.is-selected {
+            color: $color-blue;
+          }
         }
       }
     }

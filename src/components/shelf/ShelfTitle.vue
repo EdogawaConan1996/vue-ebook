@@ -1,16 +1,18 @@
 <template>
-  <div class="shelf-title">
-    <div class="shelf-title-text-wrapper">
-      <span class="shelf-title-text">{{$t('shelf.title')}}</span>
-      <span class="shelf-title-sub-text" v-show="isEditMode">{{selectedText}}</span>
+  <transition name="fade">
+    <div class="shelf-title" v-if="shelfTitleVisible">
+      <div class="shelf-title-text-wrapper">
+        <span class="shelf-title-text">{{$t('shelf.title')}}</span>
+        <span class="shelf-title-sub-text" v-show="isEditMode">{{selectedText}}</span>
+      </div>
+      <div class="shelf-title-btn-wrapper shelf-title-left">
+        <span class="shelf-title-btn-text">{{$t('shelf.clearCache')}}</span>
+      </div>
+      <div class="shelf-title-btn-wrapper shelf-title-right">
+        <span class="shelf-title-btn-text" @click="onEditClick">{{isEditMode ? $t('shelf.cancel') : $t('shelf.edit')}}</span>
+      </div>
     </div>
-    <div class="shelf-title-btn-wrapper shelf-title-left">
-      <span class="shelf-title-btn-text">{{$t('shelf.clearCache')}}</span>
-    </div>
-    <div class="shelf-title-btn-wrapper shelf-title-right">
-      <span class="shelf-title-btn-text" @click="onEditClick">{{isEditMode ? $t('shelf.cancel') : $t('shelf.edit')}}</span>
-    </div>
-  </div>
+  </transition>
 </template>
 
 <script>
