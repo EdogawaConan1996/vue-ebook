@@ -1,5 +1,5 @@
 <template>
-
+  <div class="shelf-item-image"></div>
 </template>
 
 <script>
