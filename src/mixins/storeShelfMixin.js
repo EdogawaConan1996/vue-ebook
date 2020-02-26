@@ -1,6 +1,6 @@
 import {mapActions, mapGetters} from "vuex";
 
-export default {
+export const storeShelfMixin = {
   computed: {
     ...mapGetters({
       'isEditMode': 'StoreShelf/getIsEditMode',
@@ -15,8 +15,8 @@ export default {
       'setIsEditMode': 'StoreShelf/setIsEditModeAction',
       'setShelfList': 'StoreShelf/setShelfListAction',
       'setShelfSelected': 'StoreShelf/setShelfSelectedAction',
-      'setShelfTitleVisible': 'StoreShelf/setShelfTitleVisible',
+      'setShelfTitleVisible': 'StoreShelf/setShelfTitleVisibleAction',
       'setOffsetY': 'StoreShelf/setOffsetYAction'
     })
   }
-}
+};

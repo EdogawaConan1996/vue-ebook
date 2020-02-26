@@ -73,6 +73,7 @@
         } else {
           this.$router.push('/store/shelf')
         }
+
       },
       hideHotSearch() {
         this.hotSearchVisible = false

@@ -4,7 +4,7 @@ export default {
     isEditMode: false,
     shelfList: [],
     shelfSelected: [],
-    shelfTitleVisible: false,
+    shelfTitleVisible: true,
     offsetY: 0
   },
   getters: {
@@ -32,21 +32,20 @@ export default {
     }
   },
   actions: {
-    setIsEditModeAction: ({ commit }, isEditMode) => {
-      commit('setIsEditMode', isEditMode);
+    setIsEditModeAction: ({commit}, isEditMode) => {
+      commit('setIsEditMode', isEditMode)
     },
-    setShelfListAction: ({ commit }, shelfList) => {
+    setShelfListAction: ({commit}, shelfList) => {
       commit('setShelfList', shelfList)
     },
-    setShelfSelectedAction: ({ commit }, shelfSelected) => {
-      commit('setShelfSelected', shelfSelected);
+    setShelfSelectedAction: ({commit}, shelfSelected) => {
+      commit('setShelfSelected', shelfSelected)
     },
-    setShelfTitleVisibleAction: ({ commit }, shelfTitleVisible) => {
+    setShelfTitleVisibleAction: ({commit}, shelfTitleVisible) => {
       commit('setShelfTitleVisible', shelfTitleVisible)
     },
-    setOffsetYAction: ({ commit }, offsetY) => {
+    setOffsetYAction: ({commit}, offsetY) => {
       commit('setOffsetY', offsetY)
     }
   }
-
-};
+}
