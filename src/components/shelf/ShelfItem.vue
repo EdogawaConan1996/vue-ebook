@@ -1,11 +1,11 @@
 <template>
-  <div class="shelf-item">
+  <div class="shelf-item shelf-item-shadow">
     <component :is="data.type === 1 ? book: (data.type === 2 ? category: add)" />
   </div>
 </template>
 
 <script>
-  import ShelfItemImage from "./ShelfItemImage";
+  import ShelfItemBook from "./ShelfItemBook";
   import ShelfItemCategory from "./ShelfItemCategory";
   import ShelfItemAdd from "./ShelfItemAdd";
   import {storeShelfMixin} from "../../mixins/storeShelfMixin";
@@ -21,7 +21,7 @@
     mixins: [storeShelfMixin],
     data() {
       return {
-        book: ShelfItemImage,
+        book: ShelfItemBook,
         category: ShelfItemCategory,
         add: ShelfItemAdd
       }
@@ -36,4 +36,12 @@
 
 <style scoped lang="scss">
   @import "../../assets/styles/global";
+  .shelf-item {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    &.shelf-item-shadow {
+      box-shadow: px2rem(2) px2rem(2) px2rem(6) px2rem(2) rgba(200,200,200,.3);
+    }
+  }
 </style>
