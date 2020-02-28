@@ -274,3 +274,31 @@ export function reset(vue) {
 	vue.$store.dispatch('setFontFamilyVisible', false)
 	vue.$store.dispatch('setSpeakingIconBottom', realPx(58))
 }
+
+export function appendAddToShelf(list) {
+	list.push({
+		id: -1,
+		type: 3
+	})
+	return list
+}
+
+export function removeAddromShelf(list) {
+	return list.filter(item => item.type !== 3)
+}
+
+export function goToStoreHome(vue) {
+	vue.$router.push({
+		path: '/store/home'
+	})
+}
+
+export function goToBookDetail(vue,book) {
+	vue.$router.push({
+		path: '/store/detail',
+		query: {
+			fileName: book.fileName,
+			category: book.categoryText
+		}
+	})
+}

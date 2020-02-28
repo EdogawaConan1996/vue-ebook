@@ -1,29 +1,65 @@
 <template>
   <div class="store-shelf">
-    <shelf-title />
-    <scroll class="store-shelf-scroll-wrapper" :top="0" @onScroll="onScroll">
-      <shelf-search />
-      <shelf-list />
+    <shelf-title></shelf-title>
+    <scroll
+      ref="scroll"
+      class="store-shelf-scroll-wrapper"
+      :top="0"
+      :bottom="scrollBottom"
+      @onScroll="onScroll">
+      <shelf-search></shelf-search>
+      <shelf-list></shelf-list>
     </scroll>
+    <shelf-footer></shelf-footer>
   </div>
 </template>
 
 <script>
-  import ShelfTitle from "../../components/shelf/ShelfTitle";
-  import Scroll from "../../components/common/Scroll";
-  import ShelfSearch from "../../components/shelf/ShelfSearch";
-  import {storeShelfMixin} from "../../mixins/storeShelfMixin";
-  import ShelfList from "../../components/shelf/ShelfList";
-  export default {
-    name: "StoreShelf",
-    components: {ShelfList, ShelfSearch, ShelfTitle, Scroll},
-    mixins: [storeShelfMixin],
-    methods: {
-      onScroll(offsetY) {
-        this.setOffsetY(offsetY)
-      }
+import ShelfTitle from "../../components/shelf/ShelfTitle";
+import Scroll from "../../components/common/Scroll";
+import ShelfSearch from "../../components/shelf/ShelfSearch";
+import {storeShelfMixin} from "../../mixins/storeShelfMixin";
+import ShelfList from "../../components/shelf/ShelfList";
+import {shelf} from "../../api/store";
+import { appendAddToShelf } from '../../config/store';
+import ShelfFooter from "../../components/shelf/ShelfFooter";
+
+export default {
+  name: "StoreShelf",
+  components: {ShelfFooter, ShelfList, ShelfSearch, ShelfTitle, Scroll},
+  mixins: [storeShelfMixin],
+  data() {
+    return {
+      scrollBottom: 0
     }
+  },
+  methods: {
+    onScroll(offsetY) {
+      this.setOffsetY(offsetY)
+    },
+    getShelfList() {
+      shelf().then(response => {
+        // eslint-disable-next-line no-console
+        console.log(response)
+        this.setShelfList(appendAddToShelf(response.bookList))
+      }).catch(error => {
+        // eslint-disable-next-line no-console
+        console.log(error)
+      })
+    }
+  },
+  watch: {
+    isEditMode(val) {
+      this.scrollBottom = val ? 48 : 0
+      this.$nextTick(() => {
+        this.$refs.scroll.refresh()
+      })
+    }
+  },
+  mounted() {
+    this.getShelfList()
   }
+}
 </script>
 
 <style scoped lang="scss">

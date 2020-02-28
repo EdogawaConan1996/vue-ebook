@@ -1,4 +1,5 @@
 import {mapActions, mapGetters} from "vuex";
+import { goToBookDetail } from "../config/store";
 
 export const storeShelfMixin = {
   computed: {
@@ -17,6 +18,9 @@ export const storeShelfMixin = {
       'setShelfSelected': 'StoreShelf/setShelfSelectedAction',
       'setShelfTitleVisible': 'StoreShelf/setShelfTitleVisibleAction',
       'setOffsetY': 'StoreShelf/setOffsetYAction'
-    })
+    }),
+    showBookDetail(book) {
+      goToBookDetail(this,book)
+    }
   }
 };

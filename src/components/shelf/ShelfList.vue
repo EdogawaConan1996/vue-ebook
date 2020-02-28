@@ -1,7 +1,7 @@
 <template>
   <div class="shelf-list">
-    <div class="shelf-list-item-wrapper" v-for="item in shelfList" :key="item.id">
-      <shelf-item :style="{height: itemHeight}" :data="item"/>
+    <div class="shelf-list-item-wrapper" :style="{height: itemHeight}" v-for="item in shelfList" :key="item.id">
+      <shelf-item :data="item"/>
       <div class="shelf-list-title-wrapper">
         <span class="shelf-list-title title-small">{{item.title}}</span>
       </div>
@@ -12,7 +12,6 @@
 <script>
   import {storeShelfMixin} from "../../mixins/storeShelfMixin";
   import ShelfItem from "./ShelfItem";
-  import {shelf} from "../../api/store";
   import {realPx} from "../../utils/tools";
 
   export default {
@@ -23,19 +22,6 @@
       itemHeight() {
         return ((window.innerWidth - realPx(120)) / 3) / 250 * 350 + 'px'
       }
-    },
-    methods: {
-      getShelfList() {
-        shelf().then(response => {
-          this.setShelfList(response.bookList)
-        }).catch(error => {
-          // eslint-disable-next-line no-console
-          console.log(error)
-        })
-      }
-    },
-    mounted() {
-      this.getShelfList()
     }
   }
 </script>
@@ -49,6 +35,8 @@
     z-index: 100;
     display: flex;
     flex-flow: row wrap;
+    width: 100%;
+    height: 100%;
     padding: 0 px2rem(15);
     box-sizing: border-box;
     .shelf-list-item-wrapper {

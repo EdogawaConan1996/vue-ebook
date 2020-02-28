@@ -1,4 +1,5 @@
 import {mapActions, mapGetters} from "vuex";
+import {goToBookDetail} from "../config/store";
 
 export default {
   computed: {
@@ -15,15 +16,7 @@ export default {
       'setFlapCardVisible': 'StoreHome/setFlapCardVisibleAction'
     }),
     showBookDetail(book) {
-      // eslint-disable-next-line no-console
-      console.log(book)
-      this.$router.push({
-        path: '/store/detail',
-        query: {
-          fileName: book.fileName,
-          category: book.categoryText
-        }
-      })
+      goToBookDetail(this,book)
     }
   }
 }
