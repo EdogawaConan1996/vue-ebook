@@ -8,6 +8,8 @@ import i18n from './lang';
 import './assets/styles/icon.css';
 import './assets/styles/global.scss';
 
+import './utils/createApi'
+
 // eslint-disable-next-line no-unused-vars
 import Mock from './mock';
 

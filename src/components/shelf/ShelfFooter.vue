@@ -6,11 +6,13 @@
          :key="item.index"
          @click="onTabClick(item)">
       <div class="shelf-footer-tab">
-        <div class="icon-private tab-icon" v-if="item.index === 1"></div>
-        <div class="icon-download tab-icon" v-if="item.index === 2"></div>
+        <div class="icon-private tab-icon" v-if="item.index === 1 && !isPrivate"></div>
+        <div class="icon-private-see tab-icon" v-if="item.index === 1 && isPrivate"></div>
+        <div class="icon-download tab-icon" v-if="item.index === 2 && !isDownload"></div>
+        <div class="icon-download tab-icon" v-if="item.index === 2 && isDownload"></div>
         <div class="icon-move tab-icon" v-if="item.index === 3"></div>
         <div class="icon-shelf tab-icon" v-if="item.index === 4"></div>
-        <div class="tab-text">{{item.label}}</div>
+        <div class="tab-text" :class="{'remove-text': item.index === 4}">{{label(item)}}</div>
       </div>
     </div>
    </div>
@@ -18,10 +20,16 @@
 
 <script>
 import {storeShelfMixin} from "../../mixins/storeShelfMixin";
+import {saveBookShelf} from "../../utils/storage";
 
 export default {
   name: "ShelfFooter",
   mixins: [storeShelfMixin],
+  data() {
+    return {
+      popupMenu: null
+    }
+  },
   computed: {
     isSelected() {
       return this.shelfSelected && this.shelfSelected.length > 0
@@ -47,10 +55,164 @@ export default {
           index: 4
         }
       ]
+    },
+    isPrivate() {
+      if (!this.isSelected) {
+        return false
+      } else {
+        return this.shelfSelected.every(item => item.private)
+      }
+    },
+    isDownload() {
+      if (!this.isSelected) {
+        return false
+      } else {
+        return this.shelfSelected.every(item => item.cache)
+      }
     }
   },
   methods: {
-    onTabClick(item) {}
+    hidePopup() {
+      this.popupMenu.hide()
+    },
+    showPrivate() {
+      this.popupMenu = this.popup({
+        $props: {
+          title: this.isPrivate ? this.$t('shelf.closePrivateTitle') : this.$t('shelf.setPrivateTitle'),
+          btn: [
+            {
+              text: this.isPrivate ? this.$t('shelf.close') : this.$t('shelf.open'),
+              click: () => {
+                this.setPrivate()
+              }
+            },
+            {
+              text: this.$t('shelf.cancel'),
+              click: () => {
+                this.hidePopup()
+              }
+            }
+          ]
+        },
+      });
+      this.popupMenu.show()
+    },
+    setPrivate() {
+      let isPrivate;
+      if (this.isPrivate) {
+        isPrivate = false
+      } else {
+        isPrivate = true
+      }
+      this.onComplete()
+      saveBookShelf(this.shelfList)
+      if (isPrivate) {
+        this.simpleToast(this.$t('shelf.setPrivateSuccess'))
+      } else {
+        this.simpleToast(this.$t('shelf.closePrivateSuccess'))
+      }
+    },
+    onComplete() {
+      this.hidePopup()
+      this.setIsEditMode(false)
+      saveBookShelf(this.shelfList)
+    },
+    showDownload() {
+      this.popupMenu = this.popup({
+        $props: {
+          title: this.isDownload ? this.$t('shelf.removePrivateTitle') : this.$t('shelf.setDownLoadTitle'),
+          btn: [
+            {
+              text: this.isDownload ? this.$t('shelf.close') : this.$t('shelf.open'),
+              click: () => {
+                this.setDownload()
+              }
+            },
+            {
+              text: this.$t('shelf.cancel'),
+              click: () => {
+                this.hidePopup()
+              }
+            }
+          ]
+        }
+      });
+      this.popupMenu.show()
+    },
+    setDownload() {
+      let isDownload;
+      if (this.isDownload) {
+        isDownload = false
+      } else {
+        isDownload = true
+      }
+      this.downloadSelectedBook()
+      this.shelfSelected.forEach(book => {
+        book.cache = isDownload
+      })
+      this.onComplete()
+      if (isDownload) {
+        this.simpleToast(this.$t('shelf.setDownloadSuccess'))
+      } else {
+        this.simpleToast(this.$t('shelf.closeDownloadSuccess'))
+      }
+    },
+    downloadSelectedBook() {},
+    removeSelected() {
+      this.shelfSelected.forEach(selected => {
+        this.setShelfList(this.shelfList.filter(book => book !== selected))
+      })
+      this.setShelfSelected([])
+      this.onComplete()
+    },
+    showRemove() {
+      let title;
+      if (this.shelfSelected.length === 1) {
+        title = this.$t('shelf.removeBookTitle').replace('$1', `《${this.shelfSelected[0].title}》`)
+      } else {
+        title = this.$t('shelf.removeBookTitle').replace('$1', this.$t('shelf.selectedBooks'))
+      }
+      this.popupMenu = this.popup({
+        $props: {
+          title,
+          btn: [
+            {
+              text: this.$t('shelf.removeBook'),
+              type: 'danger',
+              click: () => {
+                this.removeSelected()
+              }
+            },
+            {
+              text: this.$t('shelf.cancel'),
+              click: () => {
+                this.hidePopup()
+              }
+            }
+          ]
+        },
+      });
+      this.popupMenu.show()
+    },
+    onTabClick(item) {
+      if (!this.isSelected) {
+        return
+      }
+      switch (item.index) {
+        case 1: this.showPrivate(); break;
+        case 2: this.showDownload(); break;
+        case 3: break;
+        case 4: this.showRemove(); break;
+        default: break;
+      }
+    },
+    label(item) {
+      switch(item.index) {
+        case 1: return this.isPrivate ? item.label2 : item.label;
+        case 2: return this.isDownload ? item.label2 : item.label;
+        default: return item.label;
+      }
+    }
   }
 }
 </script>
@@ -78,6 +240,9 @@ export default {
         height: 100%;
         width: 100%;
         @include columnCenter();
+        .icon-shelf {
+          color: $color-pink
+        }
         .tab-icon {
           font-size: px2rem(20);
           color: #ccc;
@@ -88,6 +253,9 @@ export default {
           font-size: px2rem(12);
           color: #ccc;
           opacity: 0.5;
+          &.remove-text {
+            color: $color-pink;
+          }
         }
       }
     }

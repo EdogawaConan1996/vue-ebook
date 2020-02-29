@@ -31,7 +31,7 @@
 </template>
 
 <script>
-  import {switchLocale} from "../../config/tool";
+  import {switchLocale} from "../../utils/tools";
   import {storeShelfMixin} from "../../mixins/storeShelfMixin";
 
   export default {

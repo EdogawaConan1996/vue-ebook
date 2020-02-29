@@ -1,14 +1,16 @@
 <template>
-  <div class="popup" v-show="visible">
+  <div class="popup" v-show="popupVisible">
     <transition name="fade">
       <div class="popup-bg" v-show="popupVisible" @click.stop.prevent="hide" @touchmove.prevent></div>
     </transition>
     <transition name="popup-slide-up">
       <div class="popup-wrapper">
         <div class="popup-title" v-if="title && title.length > 0">{{title}}</div>
-        <div class="popup-confirm-btn" @click="third" v-if="thirdText && thirdText.length > 0">{{thirdText}}</div>
-        <div class="popup-confirm-btn" :class="{'is-remove': isRemoveText}" @click="confirm">{{confirmText}}</div>
-        <div class="popup-cancel-btn" @click="hide">{{cancelText}}</div>
+        <div class="popup-btn"
+             :class="{'danger': item.type === 'danger'}"
+             v-for="(item,index) in btn"
+             :key="index"
+             @click="item.click">{{item.text}}</div>
       </div>
     </transition>
   </div>
@@ -22,50 +24,23 @@
         type: String,
         default: ''
       },
-      confirmText: {
-        type: String,
-        default: ''
-      },
-      isRemoveText: {
-        type: Boolean,
-        default: false
-      },
-      cancelText: {
-        type: String,
-        default: ''
-      },
-      thirdText: {
-        type: String,
-        default: ''
+      btn: {
+        type: Array,
+        default() {
+          return []
+        }
       }
     },
     data() {
       return {
-        popupVisible: false,
-        visible: false
+        popupVisible: false
       }
     },
     methods: {
-      third() {
-        this.hide()
-        setTimeout(() => {
-          this.$emit('third')
-        }, 200)
-      },
-      confirm() {
-        this.hide()
-        setTimeout(() => {
-          this.$emit('confirm')
-        }, 200)
-      },
       hide() {
-        this.hide()
-        setTimeout(() => {
-          this.$emit('hide')
-        }, 200)
+        this.popupVisible = false
       },
       show() {
-        this.visible = true
         this.popupVisible = true
       }
     }
@@ -103,29 +78,11 @@
         line-height: px2rem(14);
         padding: px2rem(15);
         box-sizing: border-box;
-        text-align: center;
         color: #999;
         @include center;
       }
-      .popup-confirm-btn {
-        width: 100%;
-        height: px2rem(60);
-        border-bottom: px2rem(1) solid #eee;
-        font-size: px2rem(16);
-        color: #666;
-        font-weight: bold;
-        @include center;
-        &.is-remove {
-          color: $color-pink;
-        }
-      }
-      .popup-cancel-btn {
-        width: 100%;
-        height: px2rem(60);
-        font-size: px2rem(16);
-        color: #666;
-        font-weight: bold;
-        @include center;
+      .popup-btn {
+        &.danger {  }
       }
     }
   }

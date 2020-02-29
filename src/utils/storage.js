@@ -91,3 +91,11 @@ export const saveBookmark = (fileName,bookmark) => {
 export const getBookmark = (fileName) => {
   return getBookObject(fileName, 'bookmark')
 };
+
+export const saveBookShelf = (shelf) => {
+  return setLocalStorage('shelf', shelf)
+};
+
+export const getBookShelf = () => {
+  return getLocalStorage('shelf')
+}
