@@ -19,7 +19,9 @@ Vue.mixin({
       })
     },
     simpleToast(text) {
-      return this.toast({ text }).show()
+      const toast = this.toast({text})
+      toast.show()
+      toast.updateText(text)
     }
   }
 })

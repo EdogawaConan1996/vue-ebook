@@ -20,7 +20,9 @@
 
 <script>
 import {storeShelfMixin} from "../../mixins/storeShelfMixin";
-import {saveBookShelf} from "../../utils/storage";
+import {removeLocalStorage, saveBookShelf} from "../../utils/storage";
+import {download} from "../../api/store";
+import {removeLocalForage} from "../../utils/localforage";
 
 export default {
   name: "ShelfFooter",
@@ -42,7 +44,7 @@ export default {
           index: 1
         },
         {
-          label: this.$t('shelf.downLode'),
+          label: this.$t('shelf.download'),
           label2: this.$t('shelf.delete'),
           index: 2
         },
@@ -139,25 +141,55 @@ export default {
       });
       this.popupMenu.show()
     },
-    setDownload() {
-      let isDownload;
-      if (this.isDownload) {
-        isDownload = false
-      } else {
-        isDownload = true
-      }
-      this.downloadSelectedBook()
-      this.shelfSelected.forEach(book => {
-        book.cache = isDownload
-      })
+    async setDownload() {
       this.onComplete()
-      if (isDownload) {
-        this.simpleToast(this.$t('shelf.setDownloadSuccess'))
+      if (this.isDownload) {
+        this.removeSelectedBook()
       } else {
-        this.simpleToast(this.$t('shelf.closeDownloadSuccess'))
+        await this.downloadSelectedBook()
+        saveBookShelf(this.shelfList)
+        this.simpleToast(this.$t('shelf.removeDownloadSuccess'))
       }
     },
-    downloadSelectedBook() {},
+    removeSelectedBook() {
+      Promise.all(this.shelfSelected.map(book => this.removeBook(book))).then(books => {
+        books.map(book => {
+          book.cache = false
+        })
+        saveBookShelf(this.shelfList)
+        this.simpleToast(this.$t('shelf.setDownloadSuccess'))
+      })
+    },
+    removeBook(book) {
+      return new Promise((resolve, reject) => {
+        removeLocalStorage(`${book.categoryText}/${book.fileName}-info`)
+        removeLocalForage(book.fileName, resolve, reject)
+      })
+    },
+    async downloadSelectedBook() {
+      for (let i = 0; i < this.shelfSelected.length; i++) {
+        await this.downLoadBook(this.shelfSelected[i]).then(book => {
+          book.cache = true
+        })
+      }
+    },
+    downLoadBook(book) {
+      let text = ''
+      const toast = this.toast({
+        text
+      })
+      toast.continueShow()
+      return new Promise((resolve, reject) => {
+        download(book, book => {
+          toast.remove()
+          resolve(book)
+        }, reject, progressEvent => {
+          const progress = Math.floor(progressEvent.loaded / progressEvent.total * 100) + '%'
+          const text = this.$t('shelf.progressDownLoad').replace('$1', `${book.fileName}.epub(${progress})`)
+          toast.updateText(text)
+        })
+      })
+    },
     removeSelected() {
       this.shelfSelected.forEach(selected => {
         this.setShelfList(this.shelfList.filter(book => book !== selected))
