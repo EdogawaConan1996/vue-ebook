@@ -1,9 +1,9 @@
 <template>
   <div class="ebook-reader">
     <div id="book-wrapper"></div>
-    <div class="ebook-reader-mask" 
-      @click="onMaskClick" 
-      @touchmove="move" 
+    <div class="ebook-reader-mask"
+      @click="onMaskClick"
+      @touchmove="move"
       @touchend="moveEnd"
       @mousedown.left="onMouseEnter"
       @mousemove="onMouseMove"
@@ -25,6 +25,7 @@ import {
   saveTheme
 } from "../../utils/storage";
 import {find, flatten} from "../../utils/tools";
+import {getLocalForage} from "../../utils/localforage";
 export default {
   name: 'EbookReader',
   mixins: [ebookMixin],
@@ -110,9 +111,7 @@ export default {
       this.firstOffsetY = 0;
       this.setOffsetY(0);
     },
-    initEpub() {
-      const baseUrl = `${process.env.VUE_APP_RES_URL}/epubs/`;
-      const url = `${baseUrl}${this.fileName}.epub`;
+    initEpub(url) {
       this.book = new Epub(url);
       this.setCurrentBook(this.book);
       this.initRendition();
@@ -280,9 +279,20 @@ export default {
     }
   },
   mounted() {
-    const fileName = this.$route.params.fileName.split('|')[1];
-    this.setFileName(fileName).then(() => {
-      this.initEpub()
+    const books = this.$route.params.fileName.split('|')
+    const fileName = books[1]
+    getLocalForage(fileName, (err,blob) => {
+      if (!err && blob) {
+        this.setFileName(books.join('/')).then(() => {
+          this.initEpub(blob)
+        })
+      } else {
+        this.setFileName(books.join('/')).then(() => {
+          const baseUrl = `${process.env.VUE_APP_RES_URL}/epubs/`;
+          const url = `${baseUrl}${this.fileName}.epub`;
+          this.initEpub(url)
+        })
+      }
     })
   }
 }

@@ -1,5 +1,8 @@
 import {mapActions, mapGetters} from "vuex";
-import { goToBookDetail } from "../config/store";
+import { goToBookDetail, appendAddToShelf } from "../config/store";
+import { getBookShelf, saveBookShelf } from "../utils/storage";
+import { shelf } from "../api/store";
+
 
 export const storeShelfMixin = {
   computed: {
@@ -19,8 +22,23 @@ export const storeShelfMixin = {
       'setShelfTitleVisible': 'StoreShelf/setShelfTitleVisibleAction',
       'setOffsetY': 'StoreShelf/setOffsetYAction'
     }),
-    showBookDetail(book) {
+    showBookDetail (book) {
       goToBookDetail(this,book)
+    },
+    getShelfList() {
+      let shelfList = getBookShelf();
+      if (!shelfList) {
+        shelf().then(response => {
+          shelfList = appendAddToShelf(response.bookList)
+          saveBookShelf(shelfList)
+          this.setShelfList(shelfList)
+        }).catch(error => {
+          // eslint-disable-next-line no-console
+          console.log(error)
+        })
+      } else {
+        this.setShelfList(shelfList)
+      }
     }
   }
 };

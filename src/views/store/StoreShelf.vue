@@ -23,6 +23,7 @@ import ShelfList from "../../components/shelf/ShelfList";
 import {shelf} from "../../api/store";
 import { appendAddToShelf } from '../../config/store';
 import ShelfFooter from "../../components/shelf/ShelfFooter";
+import { getBookShelf, saveBookShelf } from "../../utils/storage";
 
 export default {
   name: "StoreShelf",
@@ -36,16 +37,6 @@ export default {
   methods: {
     onScroll(offsetY) {
       this.setOffsetY(offsetY)
-    },
-    getShelfList() {
-      shelf().then(response => {
-        // eslint-disable-next-line no-console
-        console.log(response)
-        this.setShelfList(appendAddToShelf(response.bookList))
-      }).catch(error => {
-        // eslint-disable-next-line no-console
-        console.log(error)
-      })
     }
   },
   watch: {
