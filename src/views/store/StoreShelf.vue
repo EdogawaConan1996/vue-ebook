@@ -20,10 +20,7 @@ import Scroll from "../../components/common/Scroll";
 import ShelfSearch from "../../components/shelf/ShelfSearch";
 import {storeShelfMixin} from "../../mixins/storeShelfMixin";
 import ShelfList from "../../components/shelf/ShelfList";
-import {shelf} from "../../api/store";
-import { appendAddToShelf } from '../../config/store';
 import ShelfFooter from "../../components/shelf/ShelfFooter";
-import { getBookShelf, saveBookShelf } from "../../utils/storage";
 
 export default {
   name: "StoreShelf",

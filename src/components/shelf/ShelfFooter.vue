@@ -233,7 +233,7 @@ export default {
       switch (item.index) {
         case 1: this.showPrivate(); break;
         case 2: this.showDownload(); break;
-        case 3: break;
+        case 3: this.dialog().show(); break;
         case 4: this.showRemove(); break;
         default: break;
       }

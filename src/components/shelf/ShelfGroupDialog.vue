@@ -49,6 +49,7 @@
 
 <script>
   export default {
+    name: "ShelfGroupDialog",
     props: {
       visible: Boolean,
       data: Array,
