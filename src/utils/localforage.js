@@ -43,12 +43,15 @@ export function lengthLocalForage(cb) {
 }
 
 export function iteratorLocalForage() {
+  // eslint-disable-next-line no-unused-vars
   localForage.iterate(function(value, key, iterationNumber) {
     // eslint-disable-next-line no-console
     console.log([key, value])
   }).then(function() {
+    // eslint-disable-next-line no-console
     console.log('Iteration has completed')
   }).catch(function(err) {
+    // eslint-disable-next-line no-console
     console.log(err)
   })
 }
@@ -61,3 +64,5 @@ export function support() {
     return false
   }
 }
+
+

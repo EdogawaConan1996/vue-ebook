@@ -226,6 +226,9 @@ export default {
       });
       this.popupMenu.show()
     },
+    showDialog() {
+      this.dialog({}).show()
+    },
     onTabClick(item) {
       if (!this.isSelected) {
         return
@@ -233,7 +236,7 @@ export default {
       switch (item.index) {
         case 1: this.showPrivate(); break;
         case 2: this.showDownload(); break;
-        case 3: this.dialog().show(); break;
+        case 3: this.showDialog(); break;
         case 4: this.showRemove(); break;
         default: break;
       }

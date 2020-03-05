@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
-    <div class="shelf-group-dialog-bg" v-if="visible">
-      <div class="shelf-group-dialog-wrapper" v-if="selectGroupDialogVisible">
+    <Dialog :title="dialogTitle" ref="dialog">
+      <div v-if="selectGroupDialogVisible">
         <div class="dialog-list">
           <div class="dialog-title-wrapper">
             <span class="dialog-title-text">{{$t('shelf.moveBook')}}</span>
@@ -21,7 +21,7 @@
           <div class="dialog-btn">{{$t('shelf.cancel')}}</div>
         </div>
       </div>
-      <div class="shelf-group-dialog-wrapper" v-if="newGroupDialogVisible">
+      <div v-if="newGroupDialogVisible">
         <div class="dialog-list">
           <div class="dialog-title-wrapper">
             <span class="dialog-title-text">{{$t('shelf.newGroup')}}</span>
@@ -38,29 +38,26 @@
             </div>
           </div>
         </div>
-        <div class="dialog-btn-wrapper">
-          <div class="dialog-btn" @click="hide">{{$t('shelf.cancel')}}</div>
-          <div class="dialog-btn" @click="createNewGroup" :class="{'is-empty': newGroupName.length === 0}">{{$t('shelf.confirm')}}</div>
-        </div>
       </div>
-    </div>
+      <div slot="btn">
+        <div class="dialog-btn" @click="hide">{{$t('shelf.cancel')}}</div>
+        <div class="dialog-btn" @click="createNewGroup" :class="{'is-empty': newGroupName.length === 0}">{{$t('shelf.confirm')}}</div>
+      </div>
+    </Dialog>
   </transition>
 </template>
 
 <script>
+
+  import {storeShelfMixin} from "../../mixins/storeShelfMixin";
+  import {saveBookShelf} from "../../utils/storage";
+  import {appendAddToShelf, removeAddromShelf} from "../../config/store";
+  import Dialog from "../common/Dialog";
+
   export default {
     name: "ShelfGroupDialog",
-    props: {
-      visible: Boolean,
-      data: Array,
-      bookList: Array,
-      isInGroup: Boolean,
-      category: Object,
-      isEditGroupName: {
-        type: Boolean,
-        default: false
-      }
-    },
+    components: {Dialog},
+    mixins: [storeShelfMixin],
     computed: {
       defaultCategory() {
         return [
@@ -77,6 +74,13 @@
       categoryList() {
         const list = this.bookList ? this.bookList.filter(item => item.type === 2) : []
         return [...this.defaultCategory, ...list]
+      },
+      dialogTitle () {
+        if (this.selectGroupDialogVisible && this.newGroupDialogVisible) {
+          return this.$t('shelf.moveBook')
+        } else {
+          return this.$t('shelf.newGroup')
+        }
       }
     },
     data() {
@@ -88,21 +92,20 @@
     },
     methods: {
       createNewGroup() {
-        if (this.isEditGroupName) {
-          this.$emit('editGroupName', this.category, this.newGroupName)
-          this.hide()
-        } else {
-          if (this.newGroupName.length > 0) {
-            this.$emit('group', 2, {
-              id: this.bookList[this.bookList.length - 2].id + 1,
-              itemList: [],
-              selected: false,
-              title: this.newGroupName,
-              type: 2
-            })
-          }
-          this.hide()
+        if (!this.newGroupName && this.newGroupName.length === 0) {
+          return
         }
+        const group = {
+          id: this.bookList[this.bookList.length - 2].id + 1,
+          itemList: [],
+          selected: false,
+          title: this.newGroupName,
+          type: 2
+        }
+        const list = removeAddromShelf(this.shelfList)
+        list.push(group)
+        this.setShelfList(appendAddToShelf(list))
+        this.onComplete()
       },
       clear() {
         this.newGroupName = ''
@@ -114,12 +117,28 @@
         } else if (item.edit && item.edit === 2) {
           // 移出分组
           this.$emit('group', 3, item)
-          this.hide()
         } else {
           // 移入分组
-          this.$emit('group', 1, item)
-          this.hide()
+          this.moveToGroup()
         }
+      },
+      moveToGroup(group) {
+        this.setShelfList(this.shelfList.filter(book => this.shelfSelected.indexOf(book) < 0))
+        .then(() => {
+          if (group && group.itemList) {
+            group.itemList = [...group.itemList,...this.shelfSelected]
+          }
+          group.itemList.forEach((item,index) => {
+            item.id = index + 1
+          })
+          this.simpleToast(this.$t('shelf.moveBookInSuccess').replace('$1', group.title))
+          this.onComplete()
+        })
+      },
+      onComplete() {
+        saveBookShelf(this.shelfList)
+        this.hide()
+        this.setIsEditMode(false)
       },
       showCreateGroupDialog() {
         this.newGroupDialogVisible = true
@@ -129,19 +148,11 @@
           this.$refs.dialogInput.focus()
         })
       },
-      showEditGroupDialog() {
-        this.newGroupDialogVisible = true
-        this.selectGroupDialogVisible = false
-        this.newGroupName = this.category.title
-        this.$nextTick(() => {
-          this.$refs.dialogInput.focus()
-        })
-      },
       show() {
-        this.$emit('update:visible', true)
+        this.$refs.dialog.show()
       },
       hide() {
-        this.$emit('update:visible', false)
+        this.$refs.dialog.hide()
         this.newGroupDialogVisible = false
         this.selectGroupDialogVisible = true
       }
