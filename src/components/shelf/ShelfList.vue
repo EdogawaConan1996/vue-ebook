@@ -1,5 +1,5 @@
 <template>
-  <div class="shelf-list">
+  <div class="shelf-list" :style="{'top': shelfListTop}">
     <transition-group name="list" tag="div" id="shelf-list">
       <div class="shelf-list-item-wrapper" :style="{height: itemHeight}" v-for="item in shelfList" :key="item.id">
         <shelf-item :data="item"/>
@@ -14,15 +14,24 @@
 <script>
   import {storeShelfMixin} from "../../mixins/storeShelfMixin";
   import ShelfItem from "./ShelfItem";
-  import {realPx} from "../../utils/tools";
+  import {px2rem, realPx} from "../../utils/tools";
 
   export default {
     name: "ShelfList",
+    props: {
+      top: {
+        type: Number,
+        default: 94
+      }
+    },
     components: {ShelfItem},
     mixins: [storeShelfMixin],
     computed: {
       itemHeight() {
         return ((window.innerWidth - realPx(120)) / 3) / 250 * 350 + 'px'
+      },
+      shelfListTop() {
+        return `${px2rem(this.top)}rem`
       }
     }
   }
@@ -32,7 +41,7 @@
   @import "../../assets/styles/global";
   .shelf-list {
     position: absolute;
-    top: px2rem(94);
+    /*top: px2rem(94);*/
     left: 0;
     z-index: 100;
     width: 100%;

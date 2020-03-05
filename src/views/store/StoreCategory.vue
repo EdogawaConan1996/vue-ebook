@@ -1,13 +1,66 @@
 <template>
-
+  <div class="store-shelf">
+    <shelf-title></shelf-title>
+    <scroll
+      ref="scroll"
+      class="store-shelf-scroll-wrapper"
+      :top="0"
+      :bottom="scrollBottom"
+      @onScroll="onScroll">
+      <shelf-list :top="42"></shelf-list>
+    </scroll>
+    <shelf-footer></shelf-footer>
+  </div>
 </template>
 
 <script>
+  import ShelfTitle from "../../components/shelf/ShelfTitle";
+  import Scroll from "../../components/common/Scroll";
+  import {storeShelfMixin} from "../../mixins/storeShelfMixin";
+  import ShelfList from "../../components/shelf/ShelfList";
+  import ShelfFooter from "../../components/shelf/ShelfFooter";
+
   export default {
-    name: "StoreCategory"
+    name: "StoreShelf",
+    components: {ShelfFooter, ShelfList, ShelfTitle, Scroll},
+    mixins: [storeShelfMixin],
+    data() {
+      return {
+        scrollBottom: 0
+      }
+    },
+    methods: {
+      onScroll(offsetY) {
+        this.setOffsetY(offsetY)
+      }
+    },
+    watch: {
+      isEditMode(val) {
+        this.scrollBottom = val ? 48 : 0
+        this.$nextTick(() => {
+          this.$refs.scroll.refresh()
+        })
+      }
+    },
+    mounted() {
+      this.getShelfList()
+    }
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  @import "../../assets/styles/global";
 
+  .store-shelf {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    .store-shelf-scroll-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 101;
+    }
+  }
 </style>
