@@ -44,6 +44,10 @@ export default new Router({
         {
           path: 'category',
           component: () => import('../views/store/StoreCategory')
+        },
+        {
+          path: 'speaking',
+          component: () => import('../views/store/StoreSpeaking')
         }
       ]
     }
