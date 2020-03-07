@@ -2,39 +2,26 @@
   <transition name="fade">
     <Dialog :title="dialogTitle" ref="dialog">
       <div v-if="selectGroupDialogVisible">
-        <div class="dialog-list">
-          <div class="dialog-title-wrapper">
-            <span class="dialog-title-text">{{$t('shelf.moveBook')}}</span>
-          </div>
-          <div class="dialog-list-wrapper">
-            <template v-for="(item, index) in categoryList">
-              <div class="dialog-list-item" :class="{'is-add': item.edit ? item.edit === 1 : false}" :key="index" @click="onGroupClick(item)" v-if="(item.edit === 2 && isInGroup) || item.edit !== 2 || !item.edit">
-                <div class="dialog-list-item-text">{{item.title}}</div>
-                <div class="dialog-list-icon-wrapper" v-if="category && item.id ? category.id === item.id : false">
-                  <span class="icon-check"/>
-                </div>
+        <div class="dialog-list-wrapper">
+          <template v-for="(item, index) in categoryList">
+            <div class="dialog-list-item" :class="{'is-add': item.edit ? item.edit === 1 : false}" :key="index" @click="onGroupClick(item)" v-if="(item.edit === 2 && isInGroup) || item.edit !== 2 || !item.edit">
+              <div class="dialog-list-item-text">{{item.title}}</div>
+              <div class="dialog-list-icon-wrapper" v-if="shelfCategory.id === item.id">
+                <span class="icon-check"/>
               </div>
-            </template>
-          </div>
-        </div>
-        <div class="dialog-btn-wrapper" @click="hide">
-          <div class="dialog-btn">{{$t('shelf.cancel')}}</div>
+            </div>
+          </template>
         </div>
       </div>
       <div v-if="newGroupDialogVisible">
-        <div class="dialog-list">
-          <div class="dialog-title-wrapper">
-            <span class="dialog-title-text">{{$t('shelf.newGroup')}}</span>
-          </div>
-          <div class="dialog-input-title-wrapper">
-            <span class="dialog-input-title">{{$t('shelf.groupName')}}</span>
-          </div>
-          <div class="dialog-input-wrapper">
-            <div class="dialog-input-inner-wrapper">
-              <input type="text" class="dialog-input" v-model="newGroupName" ref="dialogInput">
-              <div class="dialog-input-clear-wrapper" @click="clear" v-show="newGroupName.length > 0">
-                <span class="icon-close-circle-fill"></span>
-              </div>
+        <div class="dialog-input-title-wrapper">
+          <span class="dialog-input-title">{{$t('shelf.groupName')}}</span>
+        </div>
+        <div class="dialog-input-wrapper">
+          <div class="dialog-input-inner-wrapper">
+            <input type="text" class="dialog-input" v-model="newGroupName" ref="dialogInput">
+            <div class="dialog-input-clear-wrapper" @click="clear" v-show="newGroupName.length > 0">
+              <span class="icon-close-circle-fill"></span>
             </div>
           </div>
         </div>
@@ -51,7 +38,7 @@
 
   import {storeShelfMixin} from "../../mixins/storeShelfMixin";
   import {saveBookShelf} from "../../utils/storage";
-  import {appendAddToShelf, removeAddromShelf} from "../../config/store";
+  import {appendAddToShelf, computedId, removeAddromShelf} from "../../config/store";
   import Dialog from "../common/Dialog";
 
   export default {
@@ -72,7 +59,7 @@
         ]
       },
       categoryList() {
-        const list = this.bookList ? this.bookList.filter(item => item.type === 2) : []
+        const list = this.shelfList ? this.shelfList.filter(item => item.type === 2) : []
         return [...this.defaultCategory, ...list]
       },
       dialogTitle () {
@@ -81,6 +68,9 @@
         } else {
           return this.$t('shelf.newGroup')
         }
+      },
+      isInGroup(){
+        return this.currentType === 2
       }
     },
     data() {
@@ -116,14 +106,35 @@
           this.showCreateGroupDialog()
         } else if (item.edit && item.edit === 2) {
           // 移出分组
-          this.$emit('group', 3, item)
+          this.moveOutGroup()
         } else {
           // 移入分组
           this.moveToGroup()
         }
       },
+      moveOutGroup() {
+        this.setShelfList(this.shelfList.map(book => {
+          if (book.type === 2 && book.itemList) {
+            book.itemList = book.itemList.filter(subBook => !subBook.selected)
+          }
+          return book
+        })).then(() => {
+          const list = computedId(appendAddToShelf([].concat(removeAddromShelf(this.shelfList), ...this.shelfSelected)))
+          this.setShelfList(list).then(() => {
+            this.simpleToast(this.$t('shelf.moveBookOutSuccess'))
+            this.onComplete()
+          })
+        })
+
+
+      },
       moveToGroup(group) {
-        this.setShelfList(this.shelfList.filter(book => this.shelfSelected.indexOf(book) < 0))
+        this.setShelfList(this.shelfList.filter(book => {
+          if (book.itemList) {
+            book.itemList = book.itemList.filter(subBook => this.shelfSelected.indexOf(subBook) < 0)
+          }
+          return this.shelfSelected.indexOf(book) < 0
+        }))
         .then(() => {
           if (group && group.itemList) {
             group.itemList = [...group.itemList,...this.shelfSelected]
@@ -184,68 +195,31 @@
       max-height: 80%;
       background: white;
       border-radius: px2rem(10);
-      .dialog-list {
-        width: 100%;
-        padding: 0 px2rem(20);
-        box-sizing: border-box;
-        @include scroll;
-        .dialog-title-wrapper {
-          font-size: px2rem(22);
-          font-weight: bold;
-          text-align: center;
-          padding: px2rem(30) 0 px2rem(20) 0;
-        }
-        .dialog-list-wrapper {
-          font-size: px2rem(14);
-          .dialog-list-item {
-            display: flex;
-            padding: px2rem(15) 0;
-            box-sizing: border-box;
-            color: #666;
-            &.is-add {
-              color: $color-blue;
-              &:active {
-                color: $color-blue-transparent;
-              }
-            }
-            &:active {
-              color: rgba(102, 102, 102, .5)
-            }
-            .dialog-list-item-text {
-              flex: 1;
-            }
-            .dialog-list-icon-wrapper {
-              flex: 0 0 px2rem(30);
-              color: $color-blue;
-              @include right;
-            }
-          }
-        }
-      }
-      .dialog-btn-wrapper {
-        display: flex;
-        width: 100%;
-        background: $color-blue;
+      .dialog-list-wrapper {
         font-size: px2rem(14);
-        font-weight: bold;
-        color: white;
-        text-align: center;
-        padding: px2rem(15) 0;
-        box-sizing: border-box;
-        border-radius: 0 0 px2rem(10) px2rem(10);
-        .dialog-btn {
-          flex: 1;
-          &.is-empty {
-            color: rgba(255, 255, 255, .5);
+        .dialog-list-item {
+          display: flex;
+          padding: px2rem(15) 0;
+          box-sizing: border-box;
+          color: #666;
+          &.is-add {
+            color: $color-blue;
+            &:active {
+              color: $color-blue-transparent;
+            }
           }
           &:active {
-            color: rgba(255, 255, 255, .5)
+            color: rgba(102, 102, 102, .5)
+          }
+          .dialog-list-item-text {
+            flex: 1;
+          }
+          .dialog-list-icon-wrapper {
+            flex: 0 0 px2rem(30);
+            color: $color-blue;
+            @include right;
           }
         }
-      }
-      .dialog-input-title-wrapper {
-        font-size: px2rem(10);
-        margin-top: px2rem(20);
       }
       .dialog-input-wrapper {
         width: 100%;

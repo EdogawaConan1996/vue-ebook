@@ -5,14 +5,18 @@ export default {
     shelfList: [],
     shelfSelected: [],
     shelfTitleVisible: true,
-    offsetY: 0
+    offsetY: 0,
+    shelfCategory: [],
+    currentType: 1
   },
   getters: {
     getIsEditMode: state => state.isEditMode,
     getShelfList: state => state.shelfList,
     getShelfSelected: state => state.shelfSelected,
     getShelfTitleVisible: state => state.shelfTitleVisible,
-    getOffsetY: state => state.offsetY
+    getOffsetY: state => state.offsetY,
+    getShelfCategory: state => state.shelfCategory,
+    getCurrentType: state => state.currentType
   },
   mutations: {
     setIsEditMode: (state, isEditMode) => {
@@ -29,6 +33,12 @@ export default {
     },
     setOffsetY: (state, offsetY) => {
       state.offsetY = offsetY
+    },
+    setShelfCategory: (state, shelfCategory) => {
+      state.shelfCategory = shelfCategory
+    },
+    setCurrentType: (state, currentType) => {
+      state.currentType = currentType
     }
   },
   actions: {
@@ -46,6 +56,12 @@ export default {
     },
     setOffsetYAction: ({commit}, offsetY) => {
       commit('setOffsetY', offsetY)
+    },
+    setShelfCategoryAction: ({commit}, shelfCategory) => {
+      commit('setShelfCategory', shelfCategory)
+    },
+    setCurrentTypeAction: ({commit}, currentType) => {
+      commit('setCurrentType', currentType)
     }
   }
 }

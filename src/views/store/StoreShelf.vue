@@ -1,6 +1,6 @@
 <template>
   <div class="store-shelf">
-    <shelf-title></shelf-title>
+    <shelf-title :title="$t('shelf.title')"></shelf-title>
     <scroll
       ref="scroll"
       class="store-shelf-scroll-wrapper"
@@ -8,7 +8,7 @@
       :bottom="scrollBottom"
       @onScroll="onScroll">
       <shelf-search></shelf-search>
-      <shelf-list></shelf-list>
+      <shelf-list :data="shelfList"></shelf-list>
     </scroll>
     <shelf-footer></shelf-footer>
   </div>
@@ -46,6 +46,8 @@ export default {
   },
   mounted() {
     this.getShelfList()
+    this.setShelfCategory([])
+    this.setCurrentType(1)
   }
 }
 </script>

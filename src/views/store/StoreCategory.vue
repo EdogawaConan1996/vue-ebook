@@ -1,14 +1,16 @@
 <template>
   <div class="store-shelf">
-    <shelf-title></shelf-title>
+    <shelf-title :title="shelfCategory.title" :if-show-back="true" ></shelf-title>
     <scroll
       ref="scroll"
+      v-if="ifShowList"
       class="store-shelf-scroll-wrapper"
       :top="0"
       :bottom="scrollBottom"
       @onScroll="onScroll">
-      <shelf-list :top="42"></shelf-list>
+      <shelf-list :data="shelfCategory.itemList" :top="42"></shelf-list>
     </scroll>
+    <div v-else class="store-shelf-empty-view">{{$t('shelf.groupNone')}}</div>
     <shelf-footer></shelf-footer>
   </div>
 </template>
@@ -29,6 +31,11 @@
         scrollBottom: 0
       }
     },
+    computed: {
+      ifShowList() {
+        return this.shelfCategory.itemList && this.shelfCategory.itemList.length > 0
+      }
+    },
     methods: {
       onScroll(offsetY) {
         this.setOffsetY(offsetY)
@@ -43,7 +50,8 @@
       }
     },
     mounted() {
-      this.getShelfList()
+      this.getCategoryList(this.$route.query.title)
+      this.setCurrentType(2)
     }
   }
 </script>
@@ -61,6 +69,16 @@
       top: 0;
       left: 0;
       z-index: 101;
+    }
+    .store-shelf-empty-view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      font-size: px2rem(14);
+      color: #333;
+      @include center();
     }
   }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="shelf-list" :style="{'top': shelfListTop}">
     <transition-group name="list" tag="div" id="shelf-list">
-      <div class="shelf-list-item-wrapper" :style="{height: itemHeight}" v-for="item in shelfList" :key="item.id">
+      <div class="shelf-list-item-wrapper" :style="{height: itemHeight}" v-for="item in data" :key="item.id">
         <shelf-item :data="item"/>
         <div class="shelf-list-title-wrapper">
           <span class="shelf-list-title title-small">{{item.title}}</span>
@@ -22,6 +22,12 @@
       top: {
         type: Number,
         default: 94
+      },
+      data: {
+        type: Array,
+        default() {
+          return []
+        }
       }
     },
     components: {ShelfItem},

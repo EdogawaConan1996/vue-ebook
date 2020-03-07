@@ -11,7 +11,8 @@ export const storeShelfMixin = {
       'shelfList': 'StoreShelf/getShelfList',
       'shelfSelected': 'StoreShelf/getShelfSelected',
       'shelfTitleVisible': 'StoreShelf/getShelfTitleVisible',
-      'offsetY': 'StoreShelf/getOffsetY'
+      'offsetY': 'StoreShelf/getOffsetY',
+      'shelfCategory': 'StoreShelf/getShelfCategory'
     })
   },
   methods: {
@@ -20,7 +21,8 @@ export const storeShelfMixin = {
       'setShelfList': 'StoreShelf/setShelfListAction',
       'setShelfSelected': 'StoreShelf/setShelfSelectedAction',
       'setShelfTitleVisible': 'StoreShelf/setShelfTitleVisibleAction',
-      'setOffsetY': 'StoreShelf/setOffsetYAction'
+      'setOffsetY': 'StoreShelf/setOffsetYAction',
+      'setShelfCategory': 'StoreShelf/setShelfCategoryAction'
     }),
     showBookDetail (book) {
       goToBookDetail(this,book)
@@ -31,14 +33,20 @@ export const storeShelfMixin = {
         shelf().then(response => {
           shelfList = appendAddToShelf(response.bookList)
           saveBookShelf(shelfList)
-          this.setShelfList(shelfList)
+          return this.setShelfList(shelfList)
         }).catch(error => {
           // eslint-disable-next-line no-console
           console.log(error)
         })
       } else {
-        this.setShelfList(shelfList)
+        return this.setShelfList(shelfList)
       }
+    },
+    getCategoryList(title) {
+      this.getShelfList().then(() => {
+        const categoryList = this.shelfList.filter(book => book.type === 2 && book.title === title)[0]
+        this.setShelfCategory(categoryList)
+      })
     }
   }
 };
