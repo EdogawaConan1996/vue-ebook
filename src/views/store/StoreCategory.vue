@@ -1,6 +1,6 @@
 <template>
   <div class="store-shelf">
-    <shelf-title :title="shelfCategory.title" :if-show-back="true" ></shelf-title>
+    <shelf-title :title="shelfCategory.title"></shelf-title>
     <scroll
       ref="scroll"
       v-if="ifShowList"

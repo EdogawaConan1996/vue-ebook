@@ -1,5 +1,5 @@
 import {mapActions, mapGetters} from "vuex";
-import { goToBookDetail, appendAddToShelf } from "../config/store";
+import {goToBookDetail, appendAddToShelf, computedId, removeAddromShelf} from "../config/store";
 import { getBookShelf, saveBookShelf } from "../utils/storage";
 import { shelf } from "../api/store";
 
@@ -46,6 +46,21 @@ export const storeShelfMixin = {
       this.getShelfList().then(() => {
         const categoryList = this.shelfList.filter(book => book.type === 2 && book.title === title)[0]
         this.setShelfCategory(categoryList)
+      })
+    },
+    moveOutOfGroup(callback) {
+      this.setShelfList(this.shelfList.map(book => {
+        if (book.type === 2 && book.itemList) {
+          book.itemList = book.itemList.filter(subBook => !subBook.selected)
+        }
+        return book
+      })).then(() => {
+        const list = computedId(appendAddToShelf([].concat(removeAddromShelf(this.shelfList), ...this.shelfSelected)))
+        this.setShelfList(list).then(() => {
+          this.simpleToast(this.$t('shelf.moveBookOutSuccess'))
+          this.onComplete()
+          if (callback) callback()
+        })
       })
     }
   }

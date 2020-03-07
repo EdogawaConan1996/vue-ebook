@@ -20,7 +20,7 @@
         <div class="dialog-input-wrapper">
           <div class="dialog-input-inner-wrapper">
             <input type="text" class="dialog-input" v-model="newGroupName" ref="dialogInput">
-            <div class="dialog-input-clear-wrapper" @click="clear" v-show="newGroupName.length > 0">
+            <div class="dialog-input-clear-wrapper" @click="clear" v-show="newGroupName && newGroupName.length > 0">
               <span class="icon-close-circle-fill"></span>
             </div>
           </div>
@@ -28,7 +28,7 @@
       </div>
       <div slot="btn">
         <div class="dialog-btn" @click="hide">{{$t('shelf.cancel')}}</div>
-        <div class="dialog-btn" @click="createNewGroup" :class="{'is-empty': newGroupName.length === 0}">{{$t('shelf.confirm')}}</div>
+        <div class="dialog-btn" @click="createNewGroup" :class="{'is-empty': newGroupName && newGroupName.length === 0}">{{$t('shelf.confirm')}}</div>
       </div>
     </Dialog>
   </transition>
@@ -38,12 +38,22 @@
 
   import {storeShelfMixin} from "../../mixins/storeShelfMixin";
   import {saveBookShelf} from "../../utils/storage";
-  import {appendAddToShelf, computedId, removeAddromShelf} from "../../config/store";
+  import {appendAddToShelf, removeAddromShelf} from "../../config/store";
   import Dialog from "../common/Dialog";
 
   export default {
     name: "ShelfGroupDialog",
     components: {Dialog},
+    props: {
+      showNewGroup: {
+        type: Boolean,
+        default: false
+      },
+      groupName: {
+        type: String,
+        default: ''
+      }
+    },
     mixins: [storeShelfMixin],
     computed: {
       defaultCategory() {
@@ -85,17 +95,25 @@
         if (!this.newGroupName && this.newGroupName.length === 0) {
           return
         }
-        const group = {
-          id: this.bookList[this.bookList.length - 2].id + 1,
-          itemList: [],
-          selected: false,
-          title: this.newGroupName,
-          type: 2
+        if (this.showNewGroup) {
+          this.shelfCategory.title = this.newGroupName
+          this.onComplete()
+        } else {
+          const group = {
+            id: this.bookList[this.bookList.length - 2].id + 1,
+            itemList: [],
+            selected: false,
+            title: this.newGroupName,
+            type: 2
+          }
+          let list = removeAddromShelf(this.shelfList)
+          list.push(group)
+          list = appendAddToShelf(list)
+          this.setShelfList(list).then(() => {
+            this.moveToGroup(group)
+          });
         }
-        const list = removeAddromShelf(this.shelfList)
-        list.push(group)
-        this.setShelfList(appendAddToShelf(list))
-        this.onComplete()
+
       },
       clear() {
         this.newGroupName = ''
@@ -113,20 +131,7 @@
         }
       },
       moveOutGroup() {
-        this.setShelfList(this.shelfList.map(book => {
-          if (book.type === 2 && book.itemList) {
-            book.itemList = book.itemList.filter(subBook => !subBook.selected)
-          }
-          return book
-        })).then(() => {
-          const list = computedId(appendAddToShelf([].concat(removeAddromShelf(this.shelfList), ...this.shelfSelected)))
-          this.setShelfList(list).then(() => {
-            this.simpleToast(this.$t('shelf.moveBookOutSuccess'))
-            this.onComplete()
-          })
-        })
-
-
+        this.moveOutOfGroup(this.onComplete)
       },
       moveToGroup(group) {
         this.setShelfList(this.shelfList.filter(book => {
@@ -160,12 +165,17 @@
         })
       },
       show() {
+        this.newGroupDialogVisible = this.showNewGroup
+        this.selectGroupDialogVisible = !this.showNewGroup
+        this.newGroupName = this.groupName
         this.$refs.dialog.show()
       },
       hide() {
         this.$refs.dialog.hide()
-        this.newGroupDialogVisible = false
-        this.selectGroupDialogVisible = true
+        setTimeout(() => {
+          this.newGroupDialogVisible = false
+          this.selectGroupDialogVisible = true
+        }, 200)
       }
     }
   }
