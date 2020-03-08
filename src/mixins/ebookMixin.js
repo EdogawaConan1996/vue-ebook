@@ -96,13 +96,9 @@ export default {
       } else {
         this.setIsBookmark(false)
       }
-      // eslint-disable-next-line no-console
-      console.log(this.pageList)
       if (this.pageList) {
         const totalPage = this.pageList.length;
         const currentPage = currentLocation.start.location;
-        // eslint-disable-next-line no-console
-        console.log(this.pageList,totalPage,currentPage)
         if (currentPage &&  currentPage > 0) {
           this.setPaginate(currentPage + ' / ' + totalPage)
         } else {

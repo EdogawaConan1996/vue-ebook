@@ -74,9 +74,9 @@
   import SpeakPlaying from '../../components/speak/SpeakPlaying'
   import SpeakBottom from '../../components/speak/SpeakBottom'
   import SpeakMask from '../../components/speak/SpeakMask'
-  import { findBook, getCategoryName } from '../../config'
+  import { findBook, getCategoryName } from '../../config/store'
   import { download, flatList } from '../../api/store'
-  import { getLocalForage } from '../../utils/localForage'
+  import { getLocalForage } from '../../utils/indexDB'
   import { realPx } from '../../utils/tools'
   import Epub from 'epubjs'
 

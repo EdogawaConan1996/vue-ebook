@@ -1,5 +1,5 @@
 import {getLocalStorage, removeLocalStorage, setLocalStorage} from "../utils/storage";
-import {removeLocalForage} from "../utils/localforage";
+import {removeLocalForage} from "../utils/indexDB";
 import {realPx} from "../utils/tools";
 
 export const flapCardList = [
@@ -261,8 +261,6 @@ export function removeBookCache(fileName) {
 		removeLocalStorage(fileName)
 		removeLocalStorage(`${fileName}-info`)
 		removeLocalForage(fileName, () => {
-			// eslint-disable-next-line no-console
-			console.log(`[${fileName}]删除成功...`)
 			resolve()
 		}, reject)
 	})

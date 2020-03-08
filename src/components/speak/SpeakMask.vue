@@ -156,6 +156,7 @@
           this.displayed = this.rendition.display(this.section.href)
         }
       },
+      // eslint-disable-next-line no-unused-vars
       onProgressChange(progress) {
       },
       onProgressInput(progress) {
@@ -176,7 +177,6 @@
       },
       refresh() {
         this.readHeight = window.innerHeight * 0.9 - realPx(40) - realPx(54) - realPx(46) - realPx(48) - realPx(60) - realPx(44)
-        // console.log(this.readHeight)
         this.$refs.bookWrapper.style.height = this.readHeight + 'px'
       }
     }

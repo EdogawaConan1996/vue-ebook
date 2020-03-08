@@ -2,7 +2,7 @@
   <div class="book-detail">
     <detail-title @back="back" :title="$t('detail.title')" :showShelf="true" ref="title"/>
     <scroll class="content-wrapper" :top="42" :bottom="52" @onScroll="onScroll" ref="scroll">
-      <detail-info :cover="cover"
+      <detail-info :cover="bookItem.cover"
                    :title="title"
                    :author="author"
                    :desc="desc" />
@@ -75,7 +75,7 @@
   import DetailInfo from "../../components/detail/DetailInfo";
   import {addToShelf, removeFromBookShelf} from "../../config/store";
   import {getLocalStorage} from "../../utils/storage";
-  import {getLocalForage} from "../../utils/localforage";
+  import {getLocalForage} from "../../utils/indexDB";
   import {detail, flatList} from "../../api/store";
   import {px2rem, realPx} from "../../utils/tools";
 
@@ -159,8 +159,6 @@
         this.$refs.toast.show()
       },
       readBook() {
-        // eslint-disable-next-line no-console
-        console.log(this.bookItem);
         getLocalForage(this.bookItem.fileName, (err, value) => {
           if (!err && value instanceof Blob) {
             this.$router.push({
@@ -187,7 +185,7 @@
               }
             })
           } else {
-            // this.showToast(this.$t('shelf.downloadFirst'))
+            this.simpleToast(this.$t('shelf.downloadFirst'))
             this.$router.push({
               path: '/store/speaking',
               query: {
@@ -294,17 +292,16 @@
             fileName
           }
           detail(params).then(response => {
-            if (response.data) {
-              const data = response.data
-              this.bookItem = data
-              this.cover = this.bookItem.cover
-              let rootFile = data.rootFile
-              if (rootFile.startsWith('/')) {
-                rootFile = rootFile.substring(1, rootFile.length)
-              }
-              this.opf = `${process.env.VUE_APP_EPUB_OPF_URL}/${fileName}/${rootFile}`
-              this.parseBook(this.opf)
+            this.bookItem = response
+            if (!this.bookItem.cover.startsWith('http://')) {
+              this.bookItem.cover = `${process.env.VUE_APP_RES_URL}/img${this.bookItem.cover}`
             }
+            let rootFile = this.bookItem.rootFile
+            if (rootFile.startsWith('/')) {
+              rootFile = rootFile.substring(1, rootFile.length)
+            }
+            this.opf = `${process.env.VUE_APP_EPUB_OPF_URL}/${fileName}/${rootFile}`
+            this.parseBook(this.opf)
           }).catch(error => {
             this.showToast(error.message)
           })

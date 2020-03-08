@@ -1,5 +1,5 @@
 import axios from './index';
-import {setLocalForage} from "../utils/localforage";
+import {setLocalForage} from "../utils/indexDB";
 import {getCategoryName} from "../config/store";
 
 export const home = () => {

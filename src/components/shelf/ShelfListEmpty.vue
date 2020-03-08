@@ -1,7 +1,7 @@
 <template>
   <div class="book-shelf-empty-wrapper" ref="emptyView">
     <div class="empty-img-wrapper">
-      <img class="empty-img" :src="img">
+      <img class="empty-img" v-lazy="img">
     </div>
     <div class="empty-text-wrapper">
       <div class="empty-text" v-html="$t('shelf.welcome')"></div>

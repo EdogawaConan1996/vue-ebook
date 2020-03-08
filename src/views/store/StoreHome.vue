@@ -64,6 +64,8 @@
         this.banner = response.banner
         this.guessYouLike = response.guessYouLike
         this.recommend = response.recommend
+        //eslint-disable-next-line no-console
+        console.log(this.recommend)
         this.featured = response.featured
         this.categoryList = response.categoryList
         this.categories = response.categories

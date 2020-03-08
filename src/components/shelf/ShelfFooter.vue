@@ -22,7 +22,7 @@
 import {storeShelfMixin} from "../../mixins/storeShelfMixin";
 import {removeLocalStorage, saveBookShelf} from "../../utils/storage";
 import {download} from "../../api/store";
-import {removeLocalForage} from "../../utils/localforage";
+import {removeLocalForage} from "../../utils/indexDB";
 
 export default {
   name: "ShelfFooter",

@@ -25,7 +25,7 @@ import {
   saveTheme
 } from "../../utils/storage";
 import {find, flatten} from "../../utils/tools";
-import {getLocalForage} from "../../utils/localforage";
+import {getLocalForage} from "../../utils/indexDB";
 export default {
   name: 'EbookReader',
   mixins: [ebookMixin],
@@ -144,8 +144,6 @@ export default {
             currentPage += nav.pageList.length + 1
           })
         });
-        // eslint-disable-next-line no-console
-        console.log(locations);
         this.setPageList(locations);
         this.setBookAvailable(true);
         this.refreshLocation()
@@ -224,8 +222,6 @@ export default {
     },
     initTheme() {
       this.themeList.forEach(theme => {
-        // eslint-disable-next-line no-console
-        console.log(theme.name,theme.style);
         this.rendition.themes.register(theme.name, theme.style)
       });
       // eslint-disable-next-line no-console
@@ -288,7 +284,7 @@ export default {
         })
       } else {
         this.setFileName(books.join('/')).then(() => {
-          const baseUrl = `${process.env.VUE_APP_RES_URL}/epubs/`;
+          const baseUrl = `${process.env.VUE_APP_RES_URL}/epub/`;
           const url = `${baseUrl}${this.fileName}.epub`;
           this.initEpub(url)
         })

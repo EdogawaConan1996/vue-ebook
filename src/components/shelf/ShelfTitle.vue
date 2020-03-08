@@ -27,7 +27,7 @@
 <script>
   import {storeShelfMixin} from "../../mixins/storeShelfMixin";
   import {clearLocalStorage, saveBookShelf} from "../../utils/storage";
-import { clearLocalForage } from "../../utils/localforage";
+import { clearLocalForage } from "../../utils/indexDB";
 
   export default {
     name: "ShelfTitle",

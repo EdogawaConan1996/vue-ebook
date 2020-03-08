@@ -70,8 +70,6 @@
               this.list[key] = this.list[key].filter(book => book.fileName.indexOf(keyword) >= 0)
               return this.list[key].length > 0
             })
-            // eslint-disable-next-line no-console
-            console.log(this.list)
           }
         })
       }

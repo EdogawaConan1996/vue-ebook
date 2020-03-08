@@ -35,7 +35,6 @@ export function lengthLocalForage(cb) {
     numberOfKeys => {
       if (cb) cb(numberOfKeys)
       // eslint-disable-next-line no-console
-      console.log(numberOfKeys)
     }).catch(function(err) {
     // eslint-disable-next-line no-console
     console.log(err)
@@ -45,8 +44,6 @@ export function lengthLocalForage(cb) {
 export function iteratorLocalForage() {
   // eslint-disable-next-line no-unused-vars
   localForage.iterate(function(value, key, iterationNumber) {
-    // eslint-disable-next-line no-console
-    console.log([key, value])
   }).then(function() {
     // eslint-disable-next-line no-console
     console.log('Iteration has completed')

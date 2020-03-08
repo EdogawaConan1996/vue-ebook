@@ -1,6 +1,6 @@
 <template>
   <div class="shelf-image">
-    <img class="book-img" :src="data.cover">
+    <img class="book-img" v-lazy="data.cover">
     <span class="icon-selected" :class="{'is-selected': data.selected}" v-show="isEditMode"/>
     <div class="private-wrapper" v-show="data.private"></div>
     <div class="private-icon-wrapper" v-show="data.private">
