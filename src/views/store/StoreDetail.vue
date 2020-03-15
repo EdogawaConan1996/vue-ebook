@@ -275,12 +275,10 @@
       },
       findBookFromList(fileName) {
         flatList().then(response => {
-          if (response.status === 200) {
-            const bookList = response.data.data.filter(item => item.fileName === fileName)
-            if (bookList && bookList.length > 0) {
-              this.bookItem = bookList[0]
-              this.initBook()
-            }
+          const bookList = response.data.filter(item => item.fileName === fileName)
+          if (bookList && bookList.length > 0) {
+            this.bookItem = bookList[0]
+            this.initBook()
           }
         })
       },
@@ -292,7 +290,7 @@
             fileName
           }
           detail(params).then(response => {
-            this.bookItem = response
+            this.bookItem = response.data
             if (!this.bookItem.cover.startsWith('http://')) {
               this.bookItem.cover = `${process.env.VUE_APP_RES_URL}/img${this.bookItem.cover}`
             }

@@ -31,7 +31,7 @@ export const storeShelfMixin = {
       let shelfList = getBookShelf();
       if (!shelfList) {
         shelf().then(response => {
-          shelfList = appendAddToShelf(response.bookList)
+          shelfList = appendAddToShelf(response.data.bookList)
           saveBookShelf(shelfList)
           return this.setShelfList(shelfList)
         }).catch(error => {

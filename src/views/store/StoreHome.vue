@@ -57,18 +57,14 @@
     },
     mounted() {
       home().then(response => {
-        //eslint-disable-next-line no-console
-        console.log(response)
-        const randomIndex = Math.floor(Math.random() * response.random.length);
-        this.random = response.random[randomIndex]
-        this.banner = response.banner
-        this.guessYouLike = response.guessYouLike
-        this.recommend = response.recommend
-        //eslint-disable-next-line no-console
-        console.log(this.recommend)
-        this.featured = response.featured
-        this.categoryList = response.categoryList
-        this.categories = response.categories
+        const randomIndex = Math.floor(Math.random() * response.data.random.length);
+        this.random = response.data.random[randomIndex]
+        this.banner = response.data.banner
+        this.guessYouLike = response.data.guessYouLike
+        this.recommend = response.data.recommend
+        this.featured = response.data.featured
+        this.categoryList = response.data.categoryList
+        this.categories = response.data.categories
       }).catch(error => {
         //eslint-disable-next-line no-console
         console.log(error)

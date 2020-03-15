@@ -218,12 +218,10 @@
       },
       findBookFromList(fileName) {
         flatList().then(response => {
-          if (response.status === 200) {
-            const bookList = response.data.data.filter(item => item.fileName === fileName)
-            if (bookList && bookList.length > 0) {
-              this.bookItem = bookList[0]
-              this.init()
-            }
+          const bookList = response.data.filter(item => item.fileName === fileName)
+          if (bookList && bookList.length > 0) {
+            this.bookItem = bookList[0]
+            this.init()
           }
         })
       },

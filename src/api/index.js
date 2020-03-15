@@ -6,7 +6,7 @@ Axios.defaults.timeout = 30000;
 Axios.interceptors.response.use(response => {
   if (response && response.status === 200) {
     if (response.data.error_code === 0) {
-      return response.data.data
+      return response.data
     } else {
       return Promise.reject({message: response.data.msg})
     }
